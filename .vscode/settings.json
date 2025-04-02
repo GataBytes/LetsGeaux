@@ -1,6 +1,10 @@
 {
   "cSpell.words": [
-    "datamodel",
-    "Gata"
-  ]
+    "datamodel"
+  ],
+  "vscode-pets.petType": "dog",
+  "vscode-pets.petColor": "lightbrown",
+  "vscode-pets.theme": "forest",
+  "vscode-pets.throwBallWithMouse": false,
+  "vscode-pets.petSize": "nano"
 }
