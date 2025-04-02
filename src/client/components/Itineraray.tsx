@@ -125,6 +125,19 @@ const Itinerary: React.FC = () => {
     }
   };
 
+
+
+  //handle share itinerary with group 
+/*
+  const handleShareGroup = async(itineraryId: number, groupId: number) =>{
+await axios.post(`api/itinerary/${itineraryId}/share`, { groupId})
+  
+  }catch(err){
+  console.error('Error sharing itinerary:', err)
+  alert('Failed to share itinerary')
+  }
+*/
+
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
