@@ -15,12 +15,12 @@ import axios from 'axios';
 import Home from './Home.tsx';
 import Login from './Login.tsx';
 import Maps from './Maps.tsx'
-import Suggestions from './Suggestions.tsx'
+//import Suggestions from './Suggestions.tsx'
 import ChatBot from './ChatBot.tsx'
 import Itinerary from './Itineraray.tsx';
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
-import Activities from './Activities.tsx';
-import ActivitiesChoices from './ActivityChoices';
+//import Activities from './Activities.tsx';
+//import ActivitiesChoices from './ActivityChoices';
 import Calendar from './Calendar.tsx';
 
 // interface ISetAuth {
@@ -79,11 +79,11 @@ import Calendar from './Calendar.tsx';
           <Maps/>
         </ProtectedRoute>
       }/>
-      <Route path="/suggestions" element={
+      {/* <Route path="/suggestions" element={
         <ProtectedRoute>
           <Suggestions/>
         </ProtectedRoute>
-      }/>
+      }/> */}
       <Route path="/chatbot" element={
         <ProtectedRoute>
           <ChatBot/>
