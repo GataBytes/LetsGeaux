@@ -1,45 +1,80 @@
 import React, { useState } from 'react';
 import api from './api';
-import { TextField, Button, Stack } from '@mui/material';
+import { TextField, Button, Stack, Box } from '@mui/material';
 
 const BudgetForm: React.FC = () => {
-  const [totalBudget, setTotalBudget] = useState('');
-  const [currency, setCurrency] = useState('USD');
+  const [limit, setLimit] = useState('');
+  const [spent, setSpent] = useState('');
+  const [category, setCategory] = useState('');
   const [notes, setNotes] = useState('');
-//allow users to create new budget entries
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    api.post('/', { totalBudget, currency, notes })
-      .then(() => window.location.reload())
-      .catch(err => console.error(err));
+
+    const parsedLimit = parseFloat(limit);
+    const parsedSpent = parseFloat(spent) || 0;
+
+    if (isNaN(parsedLimit)) {
+      return alert('Please enter a valid number for the budget.');
+    }
+
+    try {
+      await api.post('/', {
+        limit: parsedLimit,
+        spent: parsedSpent,
+        category,
+        notes,
+        groupItinerary_id: null, // or assign dynamically later
+      });
+
+      // Reset form
+      setLimit('');
+      setSpent('');
+      setCategory('');
+      setNotes('');
+    } catch (err) {
+      console.error('Failed to submit budget:', err);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ p: 2 }}>
       <Stack spacing={2}>
         <TextField
           label="Total Budget"
-          value={totalBudget}
-          onChange={e => setTotalBudget(e.target.value)}
+          value={limit}
           type="number"
           required
+          fullWidth
+          onChange={(e) => setLimit(e.target.value)}
         />
         <TextField
-          label="Currency"
-          value={currency}
-          onChange={e => setCurrency(e.target.value)}
+          label="Amount Spent"
+          value={spent}
+          type="number"
+          fullWidth
+          onChange={(e) => setSpent(e.target.value)}
+        />
+        <TextField
+          label="Category"
+          value={category}
+          placeholder="e.g. Food, Travel"
           required
+          fullWidth
+          onChange={(e) => setCategory(e.target.value)}
         />
         <TextField
           label="Notes"
           value={notes}
-          onChange={e => setNotes(e.target.value)}
+          multiline
+          fullWidth
+          onChange={(e) => setNotes(e.target.value)}
         />
         <Button variant="contained" type="submit">
           Add Budget
         </Button>
       </Stack>
-    </form>
+    </Box>
   );
 };
 

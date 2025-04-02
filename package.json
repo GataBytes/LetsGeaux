@@ -60,6 +60,8 @@
     "@mui/icons-material": "^7.0.1",
     "@mui/lab": "^7.0.0-beta.10",
     "@mui/material": "^7.0.1",
+    "@mui/x-charts": "^7.28.0",
+    "@mui/x-date-pickers": "^7.28.0",
     "@mui/x-date-pickers": "^7.28.2",
     "@react-google-maps/api": "^2.20.6",
     "@types/passport-google-oauth20": "^2.0.16",

@@ -1,9 +1,14 @@
 import React from 'react';
+import { User } from '../types/models.ts';
 
-const Home: React.FC = () => {
+interface HomeProps {
+  user: User;
+}
+
+const Home: React.FC<HomeProps> = ({user}) => {
   return (
     <div>
-    <h1>HELLOOOOOOOOOO, WORLD!!!</h1>
+    <h1>HELLOOOOOOOOOO, {user.username}!!!</h1>
     </div>
   )
 }

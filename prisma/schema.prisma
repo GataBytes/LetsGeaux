@@ -101,12 +101,12 @@ model location {
 }
 
 model route {
-  id                Int        @id @default(autoincrement())
-  travelTime        String
-  walkingTravelTime String
-  destination       String
-  origin            String
-  itinerary         itinerary? @relation(fields: [itineraryId], references: [id])
+  id          Int        @id @default(autoincrement())
+  travelTime  String
+  // walkingTravelTime String?
+  destination String
+  origin      String
+  itinerary   itinerary? @relation(fields: [itineraryId], references: [id])
 
   itineraryId Int?
 }
@@ -162,31 +162,17 @@ model image {
 }
 
 model budget {
-  id                Int        @id @default(autoincrement())
+  id                Int      @id @default(autoincrement())
   spent             Decimal
-  notes             String     @db.VarChar(255)
-  created_at        DateTime
-  totalBudget       Decimal
-  updated_at        DateTime
+  notes             String   @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  limit             Decimal
+  updatedAt         DateTime @updatedAt
   groupItinerary_id Int?
-  group             group?     @relation(fields: [groupItinerary_id], references: [itinerary_id])
-  category          category[]
+  group             group?   @relation(fields: [groupItinerary_id], references: [itinerary_id])
+  category          String @default("")
 
   @@index([groupItinerary_id], map: "budget_groupItinerary_id_fkey")
-}
-
-model category {
-  id        Int      @id @default(autoincrement())
-  budgetId  Int?
-  name      String   @db.VarChar(30)
-  allocated Decimal
-  spent     Decimal
-  notes     String?  @db.VarChar(150)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  budget    budget?  @relation(fields: [budgetId], references: [id])
-
-  @@index([budgetId], map: "category_budgetId_fkey")
 }
 
 model post {

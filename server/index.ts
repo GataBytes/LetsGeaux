@@ -9,8 +9,10 @@ import { PrismaClient } from "@prisma/client";
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const prisma = new PrismaClient
 
+import groupRoute from './routes/group';
+
 // Import route modules
-import budgetRoute from './routes/budget';
+import budgetRoutes from './routes/budget';
 import suggestionRouter from './routes/suggestions';
 import usersRoute from './routes/users';
 import mapsRoute from './routes/maps';
@@ -21,11 +23,14 @@ import activityRouter from './routes/activities';
 dotenv.config();
 
 const app = express();
+app.use(express.json());
+
 const port = 8000;
 app.use(cors({
   origin: 'http://localhost:8000', 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], // 
+  credentials: true, // missing so cookies werent sent which breaks session based auth
 }));
 app.options('*', cors());
 app.use(express.static(path.join(__dirname, '..', 'dist')));
@@ -152,9 +157,10 @@ app.use('/api/suggestions', suggestionRouter);
 
 
 app.use('/api/itinerary', itineraryRoute)
-app.use('/budget', budgetRoute);
+app.use('/api/budget', budgetRoutes);
 app.use('/api/activity', activityRouter);
 
+app.use('/api/group', groupRoute);
 
 app.get('/login', (req, res) => {
   res.sendFile(path.resolve(__dirname, '..', 'dist', 'index.html'));

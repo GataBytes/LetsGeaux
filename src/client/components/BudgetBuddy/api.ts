@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   // API route base URL
-  baseURL: '/budget',
+  baseURL: '/api/budget',
   // to handle authentication sessions
   withCredentials: true,
 });
