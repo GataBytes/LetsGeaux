@@ -3,7 +3,7 @@ import { GoogleGenAI } from "@google/genai";
 import axios from 'axios'
 
 
-import { PromptKey, prompts}  from '../../src/client/types/prompt.ts';
+import { PromptKey, prompts} from '../../types/prompt.ts';
 
 
 const apiKey = process.env.GOOGLE_API_KEY;

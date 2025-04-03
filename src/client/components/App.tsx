@@ -20,18 +20,18 @@ import ChatBot from './ChatBot.tsx'
 import Itinerary from './Itineraray.tsx';
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
 import Activities from './Activities.tsx';
-import ActivitiesChoices from './ActivityChoices';
+import ActivitiesChoices from './RouteChoices';
 import Logout from './Logout.tsx';
 import Calendar from './Calendar.tsx';
-
-import { User } from '../types/models.ts';
+import RouteChoices from './RouteChoices.tsx'
+import { user } from '../../../types/models.ts';
 
 
 
 
 const App: React.FC= () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<user | null>(null)
   // Check Auth
   useEffect(() => {
     const checkAuth = async () => { //? type 
@@ -40,7 +40,7 @@ const App: React.FC= () => {
         setIsAuthenticated(response.data.isAuthenticated);
 
         if (response.data.isAuthenticated) {
-          const fetchedUser: User = response.data.user;
+          const fetchedUser: user = response.data.user;
           setUser(fetchedUser);
         }
       }
@@ -99,6 +99,11 @@ const App: React.FC= () => {
       <Route path="/budgetbuddy" element={
         <ProtectedRoute> 
           <BudgetBuddy />
+        </ProtectedRoute>
+      }/>
+      <Route path='/routechoices' element={
+        <ProtectedRoute>
+          <RouteChoices/>
         </ProtectedRoute>
       }/>
       <Route path="/logout" element={

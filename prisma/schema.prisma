@@ -170,7 +170,7 @@ model budget {
   updatedAt         DateTime @updatedAt
   groupItinerary_id Int?
   group             group?   @relation(fields: [groupItinerary_id], references: [itinerary_id])
-  category          String @default("")
+  category          String   @default("")
 
   @@index([groupItinerary_id], map: "budget_groupItinerary_id_fkey")
 }

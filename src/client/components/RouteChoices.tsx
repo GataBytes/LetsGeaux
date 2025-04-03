@@ -9,7 +9,7 @@ interface RouteData {
   travelTime: string;
 }
 
-const ActivitiesChoices = () => {
+const RouteChoices = () => {
   const [routes, setRoutes] = useState<RouteData[]>([]); // For storing route data
   const [loadingRoutes, setLoadingRoutes] = useState<boolean>(false); // Loading state for routes
   const [error, setError] = useState<string | null>(null); // To track errors
@@ -103,4 +103,4 @@ const ActivitiesChoices = () => {
   );
 };
 
-export default ActivitiesChoices;
+export default RouteChoices;

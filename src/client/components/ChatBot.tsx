@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-
+import { user } from '../../../types/models.ts';
 
 
 
@@ -12,12 +12,14 @@ interface ChatMessage {
 
 
 
+interface ChatProps {
+  user: user;
+}
 
 
 
 
-
-const ChatBot: React.FC = () => {
+const ChatBot: React.FC <ChatProps> = ({user}) => {
   const [message, setMessage] = useState<string>('');
   const [chatLog, setChatLog] = useState<ChatMessage[]>([]);
   const chatLogRef = useRef<HTMLDivElement>(null);

@@ -1,8 +1,8 @@
 import React from 'react';
-import { User } from '../types/models.ts';
+import { user } from '../../../types/models.ts';
 
 interface HomeProps {
-  user: User;
+  user: user;
 }
 
 const Home: React.FC<HomeProps> = ({user}) => {

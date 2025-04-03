@@ -112,11 +112,9 @@ const Maps = () => {
         travelTime,
       });
   
-      if (response.status === 200) {
+      if (response.status === 201) {
         console.log('Data saved successfully!');
-      } else {
-        console.log('Failed to save data.');
-      }
+      } 
     } catch (error) {
       console.error('Error saving travel data:', error);
     }
@@ -205,7 +203,7 @@ const Maps = () => {
 
       {/* Google Map */}
       <LoadScript
-        googleMapsApiKey={'API_KEY'}
+        googleMapsApiKey={'AIzaSyDbe88-k6VGoCVYDfdhGS4Zi2w7YwXiCGA'}
         libraries={libraries}
       >
         <GoogleMap
