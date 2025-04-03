@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE `route` DROP COLUMN `walkingTravelTime`;
+-- ALTER TABLE `route` DROP COLUMN `walkingTravelTime`;
