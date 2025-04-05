@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import api from './api';
 import { TextField, Button, Stack, Box } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+
 
 const BudgetForm: React.FC = () => {
   const [limit, setLimit] = useState('');
@@ -55,15 +57,21 @@ const BudgetForm: React.FC = () => {
           fullWidth
           onChange={(e) => setSpent(e.target.value)}
         />
-        <TextField
-          label="Category"
-          value={category}
-          placeholder="e.g. Food, Travel"
-          required
-          fullWidth
-          onChange={(e) => setCategory(e.target.value)}
-        />
-        <TextField
+<FormControl fullWidth required>
+  <InputLabel>Category</InputLabel>
+  <Select
+    value={category}
+    label="Category"
+    onChange={(e) => setCategory(e.target.value)}
+  >
+    {['Food', 'Travel', 'Lodging', 'Exploring', 'Misc'].map((option) => (
+      <MenuItem key={option} value={option}>
+        {option}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
+  <TextField
           label="Notes"
           value={notes}
           multiline
