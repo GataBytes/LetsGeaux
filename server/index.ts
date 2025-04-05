@@ -3,7 +3,7 @@ import path from 'path';
 import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
-// import { urlencoded } from 'express'; // TODO check for delete
+// import { urlencoded } from 'express'; 
 import cors from 'cors';
 import { PrismaClient } from "@prisma/client";
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
@@ -46,7 +46,7 @@ passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:8000/auth/google/callback',
-}, async (accessToken, refreshToken, profile, done) => { // TODO add type &/or delete
+}, async (accessToken, refreshToken, profile, done) => { 
     try {
         let user = await prisma.user.findUnique({ 
           where: { googleId: profile.id },
@@ -62,7 +62,7 @@ passport.use(new GoogleStrategy({
               isNotified: false,
               groupId: null,
               image: profile.image,
-              post: undefined,
+              // post: undefined,
               reminder: undefined,
               suggestion: undefined, 
               vote: undefined

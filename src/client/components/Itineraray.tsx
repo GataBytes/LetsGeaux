@@ -1,86 +1,86 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, TextField, Button, Box } from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
+import { isBefore, isAfter, isSameDay } from 'date-fns';
+import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
+import { user } from '../../../types/models.ts';
 
-const Itinerary: React.FC = () => {
-  const { state } = useLocation();  // Get location state passed from Calendar component
-  const selectedDates = state?.selectedDates || [];  // Get selectedDates or default to an empty array
-  const [editingItinerary, setEditingItinerary] = useState<any | null>(null);
 
+
+interface ItineraryProps{
+user: user
+}
+
+
+
+const Itinerary: React.FC <ItineraryProps>= ({user}) => {
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]); // Store selected dates
   const [itineraryName, setItineraryName] = useState('');
   const [itineraryNotes, setItineraryNotes] = useState('');
   const [itineraries, setItineraries] = useState<any[]>([]);
+  const [editingItinerary, setEditingItinerary] = useState<any | null>(null);
   const [error, setError] = useState<string>('');
 
-  useEffect(() => {
-    if (selectedDates.length > 0 && !editingItinerary) {
-      setItineraryName(`Trip from ${selectedDates[0].toLocaleDateString()} to ${selectedDates[selectedDates.length - 1].toLocaleDateString()}`);
-    }
-
-    // Populate fields if editing an itinerary
-    if (editingItinerary) {
-      setItineraryName(editingItinerary.name);
-      setItineraryNotes(editingItinerary.notes);
-    }
-  }, [selectedDates, editingItinerary]);
-
-
-  useEffect(() => {
-    const fetchItineraries = async () => {
-      try {
-        const response = await axios.get('/api/itinerary');
-        setItineraries(response.data);
-      } catch (err) {
-        console.error('Error fetching itineraries:', err);
+  // Handle date change and determine start and end dates
+  const handleDateChange = (newDate: Date | null) => {
+    if (!startDate) {
+      setStartDate(newDate);
+    } else if (!endDate) {
+      if (isAfter(newDate, startDate)) {
+        setEndDate(newDate);
+      } else {
+        setStartDate(newDate);
+        setEndDate(null);
       }
-    };
-  
-    fetchItineraries();
-  }, []); 
-
-
-  const handleEditSubmit = async () => {
-    if (!itineraryName || !itineraryNotes) {
-      setError('Please provide a name and notes for the itinerary');
-      return;
-    }
-
-    const updatedItineraryData = {
-      id: editingItinerary.id,
-      creator_id: editingItinerary.creator_id,
-      member_id: editingItinerary.member_id,
-      name: itineraryName,
-      notes: itineraryNotes,
-      begin: editingItinerary.begin,
-      end: editingItinerary.end,
-      upVotes: editingItinerary.upVotes,
-      downVotes: editingItinerary.downVotes,
-    };
-
-    try {
-      const response = await axios.patch(`/api/itinerary/${editingItinerary.id}`, updatedItineraryData);
-      console.log('Itinerary Updated:', response.data);
-      setItineraries(prev => prev.map(itinerary => itinerary.id === editingItinerary.id ? response.data : itinerary));
-      // Reset form and state after successful update
-      setEditingItinerary(null);
-      setItineraryName('');
-      setItineraryNotes('');
-    } catch (err) {
-      console.error('Error updating itinerary:', err);
+    } else if (isSameDay(newDate, startDate) || isSameDay(newDate, endDate)) {
+      setStartDate(null);
+      setEndDate(null);
+    } else {
+      if (isBefore(newDate, startDate)) {
+        setStartDate(newDate);
+        setEndDate(null);
+      } else if (isAfter(newDate, endDate!)) {
+        setEndDate(newDate);
+      }
     }
   };
 
-  const handleCancelEdit = () => {
-    setEditingItinerary(null);  // Reset the editing state
-    setItineraryName('');
-    setItineraryNotes('');
+  // Update selectedDates based on the startDate and endDate
+  useEffect(() => {
+    if (startDate && endDate) {
+      const dates = eachDayOfInterval({ start: startDate, end: endDate });
+      setSelectedDates(dates);
+    }
+  }, [startDate, endDate]);
+
+  // Function to highlight the range of days
+  const CustomPickersDay = (props: PickersDayProps<Date>) => {
+    const { day, selected, ...rest } = props;
+    const isInRange = startDate && endDate && isAfter(day, startDate) && isBefore(day, endDate);
+    const isSelected = isSameDay(day, startDate) || isSameDay(day, endDate) || isInRange;
+
+    return (
+      <PickersDay
+        {...rest}
+        day={day}
+        selected={isSelected}
+        sx={{
+          backgroundColor: isSelected ? 'primary.main' : 'transparent',
+          '&:hover': {
+            backgroundColor: 'primary.light',
+          },
+        }}
+      />
+    );
   };
 
-  const handleEditClick = (itinerary: any) => {
-    setEditingItinerary(itinerary);
-  };
-
+  // Function to handle the itinerary form submission
   const handleSubmit = async () => {
     if (!itineraryName || selectedDates.length === 0) {
       setError('Please provide a name and select dates for the itinerary');
@@ -88,19 +88,18 @@ const Itinerary: React.FC = () => {
     }
 
     const itineraryData = {
-      creator_id: 1,  
-      member_id: 2,   
+      creatorId: user.id, 
+      member_id: 2,  
       name: itineraryName,
       notes: itineraryNotes,
-      begin: selectedDates[0].toISOString(),  // Start date
-      end: selectedDates[selectedDates.length - 1].toISOString(),  // End date
+      begin: selectedDates[0].toISOString(),
+      end: selectedDates[selectedDates.length - 1].toISOString(),
       upVotes: 0,
       downVotes: 0,
     };
 
     try {
       const response = await axios.post('/api/itinerary', itineraryData);
-      console.log('Itinerary Created:', response.data);
       setItineraries(prev => [...prev, response.data]);
       setItineraryName('');
       setItineraryNotes('');
@@ -111,114 +110,159 @@ const Itinerary: React.FC = () => {
     }
   };
 
+  // Fetch existing itineraries
+  useEffect(() => {
+    const fetchItineraries = async () => {
+      try {
+        const response = await axios.get('/api/itinerary');
+        setItineraries(response.data);
+      } catch (err) {
+        console.error('Error fetching itineraries:', err);
+      }
+    };
 
+    fetchItineraries();
+  }, []);
 
+  // Handle edit button click
+  const handleEditClick = (itinerary: any) => {
+    setEditingItinerary(itinerary);
+    setItineraryName(itinerary.name);
+    setItineraryNotes(itinerary.notes);
+
+    // Set start and end dates based on itinerary's begin and end
+    const start = new Date(itinerary.begin);
+    const end = new Date(itinerary.end);
+    setStartDate(start);
+    setEndDate(end);
+  };
+
+  // Handle delete of an itinerary
   const handleDelete = async (itineraryId: number) => {
     try {
-      // Send DELETE request to server
       await axios.delete(`/api/itinerary/${itineraryId}`);
-      // Update the state to remove the deleted itinerary 
       setItineraries(prev => prev.filter(itinerary => itinerary.id !== itineraryId));
-      console.log('Itinerary deleted');
     } catch (err) {
       console.error('Error deleting itinerary:', err);
     }
   };
 
+  // Handle save changes on editing an itinerary
+  const handleEditSubmit = async () => {
+    if (!itineraryName || selectedDates.length === 0) {
+      setError('Please provide a name and select dates for the itinerary');
+      return;
+    }
+
+    const updatedItineraryData = {
+      id: editingItinerary.id,
+      creator_id: editingItinerary.creator_id,
+      member_id: editingItinerary.member_id,
+      name: itineraryName,
+      notes: itineraryNotes,
+      begin: selectedDates[0].toISOString(),
+      end: selectedDates[selectedDates.length - 1].toISOString(),
+      upVotes: editingItinerary.upVotes,
+      downVotes: editingItinerary.downVotes,
+    };
+
+    try {
+      const response = await axios.patch(`/api/itinerary/${editingItinerary.id}`, updatedItineraryData);
+      setItineraries(prev => prev.map(itinerary => itinerary.id === editingItinerary.id ? response.data : itinerary));
+      setEditingItinerary(null);
+      setItineraryName('');
+      setItineraryNotes('');
+      setStartDate(null);
+      setEndDate(null);
+      setError('');
+    } catch (err) {
+      setError('Error updating itinerary');
+      console.error('Error updating itinerary:', err);
+    }
+  };
+
   return (
-    <Container>
-      <Typography variant="h4" gutterBottom>
-        {editingItinerary ? 'Edit Itinerary' : 'Create Your Itinerary'}
-      </Typography>
+    
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      {/* {console.log(user)} */}
+      <Container>
+        <Typography variant="h4" gutterBottom>
+          {editingItinerary ? 'Edit Itinerary' : 'Choose Dates for Your Trip'}
+        </Typography>
 
-      {error && <Typography color="error">{error}</Typography>}
+        {error && <Typography color="error">{error}</Typography>}
 
-      <TextField
-        label="Itinerary Name"
-        fullWidth
-        value={itineraryName}
-        onChange={(e) => setItineraryName(e.target.value)}
-        sx={{ marginBottom: 2 }}
-        required
-      />
-
-      <TextField
-        label="Itinerary Notes"
-        fullWidth
-        value={itineraryNotes}
-        onChange={(e) => setItineraryNotes(e.target.value)}
-        multiline
-        rows={4}
-        sx={{ marginBottom: 2 }}
-      />
-
-      <Box display="flex" flexDirection="column" mb={2}>
-        <Typography variant="h6">Selected Dates:</Typography>
-        <Box display="flex" flexWrap="wrap" justifyContent="center">
-          {selectedDates.map((date: any, index: any) => (
-            <Typography key={index} variant="body2" sx={{ margin: 1 }}>
-              {date.toLocaleDateString()}
-            </Typography>
-          ))}
+        <Box display="flex" justifyContent="center" alignItems="center" my={2}>
+          <DateCalendar
+            value={startDate || endDate}
+            onChange={handleDateChange}
+            views={['day']}
+            slots={{
+              day: CustomPickersDay,
+            }}
+          />
         </Box>
-      </Box>
 
-      <Box display="flex" gap={2}>
-        {editingItinerary ? (
-          <>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleEditSubmit}
-            >
+        {startDate && endDate && (
+          <Typography variant="h6" align="center" color="primary" mt={2}>
+            Selected Range: {startDate.toLocaleDateString()} to {endDate.toLocaleDateString()}
+          </Typography>
+        )}
+
+        <TextField
+          label="Itinerary Name"
+          fullWidth
+          value={itineraryName}
+          onChange={(e) => setItineraryName(e.target.value)}
+          sx={{ marginBottom: 2 }}
+          required
+        />
+
+        <TextField
+          label="Itinerary Notes"
+          fullWidth
+          value={itineraryNotes}
+          onChange={(e) => setItineraryNotes(e.target.value)}
+          multiline
+          rows={4}
+          sx={{ marginBottom: 2 }}
+        />
+
+        <Box display="flex" justifyContent="center" my={3}>
+          {editingItinerary ? (
+            <Button variant="contained" color="primary" onClick={handleEditSubmit}>
               Save Changes
             </Button>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleCancelEdit}
-            >
-              Cancel
+          ) : (
+            <Button variant="contained" color="primary" onClick={handleSubmit}>
+              Save Itinerary
             </Button>
-          </>
-        ) : (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit}
-          >
-            Save Itinerary
-          </Button>
-        )}
-      </Box>
+          )}
+        </Box>
 
-      <Box mt={4}>
-        <Typography variant="h5">Created Itineraries:</Typography>
-        {itineraries.map((itinerary, index) => (
-          <Box key={index} mb={2}>
-            <Typography variant="h6">{itinerary.name}</Typography>
-            <Typography variant="body1">{itinerary.notes}</Typography>
-            <Typography variant="body2">{`Begin: ${new Date(itinerary.begin).toLocaleString()}`}</Typography>
-            <Typography variant="body2">{`End: ${new Date(itinerary.end).toLocaleString()}`}</Typography>
+        <Box mt={4}>
+          <Typography variant="h5">Created Itineraries</Typography>
+          {itineraries.map((itinerary, index) => (
+            <Box key={index} mb={2}>
+              <Typography variant="h6">{itinerary.name}</Typography>
+              <Typography variant="body1">{itinerary.notes}</Typography>
+              <Typography variant="body2">{`Begin: ${new Date(itinerary.begin).toLocaleString()}`}</Typography>
+              <Typography variant="body2">{`End: ${new Date(itinerary.end).toLocaleString()}`}</Typography>
 
-            <Box display="flex" gap={2}>
-              <Button variant="contained" color="secondary" onClick={() => handleEditClick(itinerary)}>
-                Edit
-              </Button>
-              <Button variant="contained" color="error" onClick={() => handleDelete(itinerary.id)}>
-                Delete
-              </Button>
+              <Box display="flex" gap={2}>
+                <Button variant="contained" color="secondary" onClick={() => handleEditClick(itinerary)}>
+                  Edit
+                </Button>
+                <Button variant="contained" color="error" onClick={() => handleDelete(itinerary.id)}>
+                  Delete
+                </Button>
+              </Box>
             </Box>
-          </Box>
-        ))}
-      </Box>
-    </Container>
+          ))}
+        </Box>
+      </Container>
+    </LocalizationProvider>
   );
 };
 
 export default Itinerary;
-
- 
-
-
-

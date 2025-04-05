@@ -17,11 +17,12 @@ model user {
   googleId   String       @unique
   groupId    Int?
   image      image[]
-  post       post[]
+  // post       post[]
   reminder   reminder[]
   suggestion suggestion[]
   group      group?       @relation(fields: [groupId], references: [id])
   vote       vote[]
+  itinerary  itinerary[]
 
   @@index([groupId], map: "user_groupId_fkey")
 }
@@ -47,18 +48,19 @@ model suggestion {
 }
 
 model itinerary {
-  id         Int        @id @default(autoincrement())
-  creator_id Int
-  member_id  Int
-  name       String     @db.VarChar(50)
-  begin      DateTime
-  end        DateTime
-  upVotes    Int
-  downVotes  Int
-  createdAt  DateTime
-  notes      String     @db.VarChar(150)
-  route      route[]
-  activity   activity[]
+  id        Int        @id @default(autoincrement())
+  member_id Int
+  name      String     @db.VarChar(50)
+  begin     DateTime
+  end       DateTime
+  upVotes   Int
+  downVotes Int
+  createdAt DateTime
+  notes     String     @db.VarChar(150)
+  route     route[]
+  activity  activity[]
+  creator   user?      @relation(fields: [creatorId], references: [id])
+  creatorId Int?
 }
 
 model activity {
@@ -175,7 +177,8 @@ model budget {
   @@index([groupItinerary_id], map: "budget_groupItinerary_id_fkey")
 }
 
-model post {
+
+/* model post {
   id           Int      @id @default(autoincrement())
   title        String   @db.Text
   content      String   @db.Text
@@ -191,13 +194,26 @@ model post {
   author       user?    @relation(fields: [authorId], references: [id])
 
   @@index([authorId], map: "post_authorId_fkey")
-}
+} */
 
-model chatHistory {
+model chatHistory { 
+  id Int @id @default(autoincrement())
+  userId Int? // 
+  sessionId String @unique // Session identifier
+  conversationName String? @db.VarChar(255) // Allow naming
+  lastActive DateTime @default(now()) 
+
+  messages message[] @relation("ChatHistoryToMessage")
+}
+model message {
   id          Int      @id @default(autoincrement())
   userId      Int?
   userMessage String   @db.Text
   botResponse String   @db.LongText
   timeStamp   DateTime @default(now())
-  sessionId   String?  @db.VarChar(100)
+  sessionId   String  @db.VarChar(100)  
+  
+  ChatHistory chatHistory @relation("ChatHistoryToMessage", fields: [sessionId], references: [sessionId])
+
 }
+

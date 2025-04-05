@@ -42,6 +42,7 @@ const App: React.FC= () => {
         if (response.data.isAuthenticated) {
           const fetchedUser: user = response.data.user;
           setUser(fetchedUser);
+          localStorage.removeItem('sessionId');
         }
       }
       catch (error) {
@@ -88,14 +89,10 @@ const App: React.FC= () => {
       }/>
       <Route path="/itinerary" element={
         <ProtectedRoute>
-          <Itinerary/>
+          {user && <Itinerary user = {user}/>}
         </ProtectedRoute>
       }/>
-      <Route path="/calendar" element={
-        <ProtectedRoute>
-          <Calendar/>
-        </ProtectedRoute> 
-      }/>
+      
       <Route path="/budgetbuddy" element={
         <ProtectedRoute> 
           <BudgetBuddy />
