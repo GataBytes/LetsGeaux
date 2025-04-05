@@ -1,7 +1,8 @@
 import React, { FC, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Box, Typography, CircularProgress, List, ListItem, ListItemText, Grid, Button } from '@mui/material';
-
+import Itinerary from './Itineraray';
+import { useLocation, useParams } from 'react-router-dom';
 interface RouteData {
   id: number;
   origin: string;
@@ -13,14 +14,16 @@ const RouteChoices = () => {
   const [routes, setRoutes] = useState<RouteData[]>([]); // For storing route data
   const [loadingRoutes, setLoadingRoutes] = useState<boolean>(false); // Loading state for routes
   const [error, setError] = useState<string | null>(null); // To track errors
-
+  const location = useLocation();  // Get the location object
+  const { itineraryId } = location.state || {}
   // Fetch route data
   const fetchRouteData = async () => {
     setLoadingRoutes(true);
     setError(null);
 
     try {
-      const response = await axios.get('/api/maps');
+      
+      const response = await axios.get(`/api/maps/${itineraryId}`);
       setRoutes(response.data);
     } catch (err) {
       setError('Error fetching route data. Please try again later.');
@@ -52,7 +55,7 @@ const RouteChoices = () => {
       <Typography variant="h5" gutterBottom>
         Route Information
       </Typography>
-
+    {console.log(itineraryId)}
       {/* Error message */}
       {error && (
         <Box mt={2} color="red">

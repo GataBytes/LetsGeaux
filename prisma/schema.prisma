@@ -22,7 +22,6 @@ model user {
   suggestion suggestion[]
   group      group?       @relation(fields: [groupId], references: [id])
   vote       vote[]
-  itinerary  itinerary[]
 
   @@index([groupId], map: "user_groupId_fkey")
 }
@@ -40,7 +39,6 @@ model suggestion {
   image         String     @db.TinyText
   phoneNum      String     @db.VarChar(15)
   userId        Int?
-  // activity      activity[]
   location      location[]
   user          user?      @relation(fields: [userId], references: [id])
 
@@ -57,35 +55,28 @@ model itinerary {
   downVotes Int
   createdAt DateTime
   notes     String     @db.VarChar(150)
-  route     route[]
+  creatorId Int?
   activity  activity[]
   creator   user?      @relation(fields: [creatorId], references: [id])
-  creatorId Int?
+  route     route[]
+
+  @@index([creatorId], map: "itinerary_creatorId_fkey")
 }
 
 model activity {
   id          Int        @id @default(autoincrement())
-  // participant  Int?
   name        String?    @db.VarChar(50)
   description String     @db.VarChar(200)
+  address     String?
   phone       String?    @db.VarChar(150)
-  // creatorId    Int?
-  // suggestionId Int?
-  // locationId   Int?
   time        String?
   date        String?
-  address     String?
-  location    String?
   image       String?
-  itinerary   itinerary? @relation(fields: [itineraryId], references: [id])
-  // location     location?   @relation(fields: [locationId], references: [id])
-  // suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
-  // image        image[]
-  // reminder     reminder[]
-
-  // @@index([locationId], map: "activity_locationId_fkey")
-  // @@index([suggestionId], map: "activity_suggestionId_fkey")
+  location    String?
   itineraryId Int?
+  itinerary   itinerary? @relation(fields: [itineraryId], references: [id])
+
+  @@index([itineraryId], map: "activity_itineraryId_fkey")
 }
 
 model location {
@@ -96,7 +87,6 @@ model location {
   latitude     Decimal
   longitude    Decimal
   suggestionId Int?
-  // activity     activity[]
   suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
 
   @@index([suggestionId], map: "location_suggestionId_fkey")
@@ -104,13 +94,13 @@ model location {
 
 model route {
   id          Int        @id @default(autoincrement())
-  travelTime  String
-  // walkingTravelTime String?
   destination String
   origin      String
+  travelTime  String
+  itineraryId Int?
   itinerary   itinerary? @relation(fields: [itineraryId], references: [id])
 
-  itineraryId Int?
+  @@index([itineraryId], map: "route_itineraryId_fkey")
 }
 
 model vote {
@@ -143,7 +133,6 @@ model reminder {
   call_message String   @db.VarChar(40)
   userId       Int?
   activityId   Int?
-  // activity     activity? @relation(fields: [activityId], references: [id])
   user         user?    @relation(fields: [userId], references: [id])
 
   @@index([activityId], map: "reminder_activityId_fkey")
@@ -156,7 +145,6 @@ model image {
   notes      String @db.VarChar(255)
   activityId Int?
   userId     Int?
-  // activity   activity? @relation(fields: [activityId], references: [id])
   user       user?  @relation(fields: [userId], references: [id])
 
   @@index([activityId], map: "image_activityId_fkey")
@@ -167,12 +155,12 @@ model budget {
   id                Int      @id @default(autoincrement())
   spent             Decimal
   notes             String   @db.VarChar(255)
+  groupItinerary_id Int?
   createdAt         DateTime @default(now())
   limit             Decimal
   updatedAt         DateTime @updatedAt
-  groupItinerary_id Int?
-  group             group?   @relation(fields: [groupItinerary_id], references: [itinerary_id])
   category          String   @default("")
+  group             group?   @relation(fields: [groupItinerary_id], references: [itinerary_id])
 
   @@index([groupItinerary_id], map: "budget_groupItinerary_id_fkey")
 }

@@ -27,7 +27,7 @@ import TipsIcon  from '@mui/icons-material/TipsAndUpdates';
 import ChatIcon  from '@mui/icons-material/TryOutlined';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import EventIcon from '@mui/icons-material/Event';
-
+import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';
 const drawerWidth = 240;
 
 type Anchor = 'left';
@@ -172,7 +172,7 @@ const NavDrawer: React.FC = () => {
               {/* Route Choices  */}
             <ListItem key={'RouteChoices'} disablePadding>
               <ListItemButton component={Link} to="/routechoices" onClick={handleDrawerClose}>
-                <ListItemIcon>💰</ListItemIcon>
+                <ListItemIcon><PinDropOutlinedIcon/></ListItemIcon>
                 <ListItemText primary="Route Choices" />
               </ListItemButton>
             </ListItem>

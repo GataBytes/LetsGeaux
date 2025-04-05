@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import axios from "axios";
-import { TextField, Button, Box, Typography } from '@mui/material'; // MUI imports
+import { TextField, Button, Box, Typography, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'; 
 
-// Container style for the map
+// Container style for the map 
 const containerStyle = {
   width: "100%",
   height: "500px",
@@ -19,10 +19,14 @@ const center = {
 const libraries: any = ['geometry', 'marker']; 
 
 const Maps = () => {
+  const navigate = useNavigate();
   const [origin, setOrigin] = useState<string>("");
   const [destination, setDestination] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [travelTime, setTravelTime] = useState<string | null>(null);  // State to hold the travel time
+  const [travelTime, setTravelTime] = useState<string | null>(null);  
+  const [itinerary, setItinerary] = useState<Array<any>>([]); // Change to any for better handling of data
+  const [openModal, setOpenModal] = useState<boolean>(false); // State to 
+const [routeInfo, setRouteinfo] = useState<number>(0)
 
   const mapRef = useRef<google.maps.Map | null>(null);
   const directionsRenderer = useRef<google.maps.DirectionsRenderer | null>(null);
@@ -30,6 +34,38 @@ const Maps = () => {
   const originMarker = useRef<google.maps.Marker | null>(null);  
   const destinationMarker = useRef<google.maps.Marker | null>(null);  
   const polylineRef = useRef<google.maps.Polyline | null>(null);
+
+  useEffect(() => {
+    const fetchItinerary = async () => {
+      try {
+        const response = await axios.get('/api/itinerary');
+        setItinerary(response.data); // Populate itinerary state
+      } catch (err) {
+        console.error('Error fetching itineraries:', err);
+      }
+    };
+
+    fetchItinerary();
+  }, []);
+
+   
+  const handleSelectItinerary = (itineraryId: number, routeInfo: number) => {
+    console.log('handleSelectItinerary called with:', itineraryId, routeInfo); // Check if this is being logged
+  
+    axios.patch(`/api/maps/${routeInfo}`, { itineraryId })
+      .then((response:any) => {
+        console.log('Response from PATCH request:', response); // Check if this logs the response
+        
+        if (response.status === 200) {
+          console.log('Itinerary added successfully:', response);
+          navigate('/routechoices', { state: { itineraryId } });
+          setOpenModal(false);
+        }
+      })
+      .catch((error:any) => {
+        console.error('Error during PATCH request:', error); // Catch and log errors
+      });
+  };
 
   // Function to fetch directions and calculate the travel time
   const fetchDirections = async () => {
@@ -103,7 +139,7 @@ const Maps = () => {
       suppressMarkers: true,
     });
   };
-
+  
   const saveTravel = async (origin: string, destination: string, travelTime: string) => {
     try {
       const response = await axios.post('/api/maps', {
@@ -111,9 +147,11 @@ const Maps = () => {
         destination,
         travelTime,
       });
-  
+      setRouteinfo(response.data.routeInfo.id)
+     
       if (response.status === 201) {
         console.log('Data saved successfully!');
+        setOpenModal(true); // Open the modal when the data is saved
       } 
     } catch (error) {
       console.error('Error saving travel data:', error);
@@ -161,17 +199,17 @@ const Maps = () => {
       <Typography variant="h4" gutterBottom>
         Google Maps Directions
       </Typography>
-
+   
       {/* Input Fields */}
       <Box display="flex" flexDirection="column" gap={2} mb={2}>
         <TextField
-          label="Enter origin"
+          label="Enter the start address or place"
           variant="outlined"
           value={origin}
           onChange={(e) => setOrigin(e.target.value)}
         />
         <TextField
-          label="Enter destination"
+          label="Enter destination address or place"
           variant="outlined"
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
@@ -215,6 +253,40 @@ const Maps = () => {
           {/* The markers will be placed automatically after directions are fetched */}
         </GoogleMap>
       </LoadScript>
+
+      {/* Modal for itinerary options */}
+      <Dialog open={openModal} onClose={() => setOpenModal(false)} fullWidth maxWidth="md">
+        <DialogTitle>Itinerary Options</DialogTitle>
+        <DialogContent>
+          <Typography variant="h6">Itinerary Options</Typography>
+          <Box mt={2}>
+           
+            {itinerary.length > 0 ? (
+            
+              itinerary.map((trip, id) => (
+                <Card key={id} variant="outlined" sx={{ marginBottom: 2 }}>
+                  <CardContent>
+                    <Typography variant="h6">{trip.name}</Typography>
+                    <Typography>{trip.notes}</Typography>
+                  </CardContent>
+                 
+                  <Button onClick={()=>handleSelectItinerary(trip.id, routeInfo) }>
+                  Select</Button>
+                 
+                </Card>
+              ))
+            ) : (
+              <Typography>No itinerary available.</Typography>
+            )}
+          </Box>
+        
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenModal(false)} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

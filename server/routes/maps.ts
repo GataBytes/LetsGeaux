@@ -3,6 +3,7 @@
 import express from 'express';
 
 import axios from 'axios'
+import { userInfo } from 'os';
 
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
@@ -71,9 +72,13 @@ mapsRoute.post('/', async(req:any, res:any)=>{
     });
   }
 })
-mapsRoute.get('/',async (req:any, res:any)=>{
+mapsRoute.get('/:itineraryId',async (req:any, res:any)=>{
+  const {itineraryId} = req.params
   try{
-const routeGet = await prisma.route.findMany()
+const routeGet = await prisma.route.findMany(
+ {where:{itineraryId:+itineraryId}}
+  
+)
 console.log('Travel info ')
 res.status(200).send(routeGet)
   }
@@ -96,5 +101,36 @@ try {
     res.status(500).json({ message: 'Error deleting route. Please try again later.' });
   }
 })
+mapsRoute.patch('/:routeInfo', async (req: any, res: any) => {
+  const { itineraryId } = req.body;
+  
+
+  if (!itineraryId) {
+    return res.status(400).json({ error: "Itinerary ID is required" });
+  }
+
+  try {
+    // Update the map with the provided itineraryId
+    const updateMap = await prisma.route.update({
+      where: {
+        id: +req.params.routeInfo, 
+      },
+      data: {
+        itineraryId, 
+      },
+    });
+
+    if (!updateMap) {
+      
+      return res.status(404).json({ error: "No map entry found to update" });
+    }
+
+    
+    res.status(200).json(updateMap);
+  } catch (error) {
+    console.error('Error updating map:', error);
+    res.status(500).json({ error: 'Internal server error' }); 
+  }
+});
 
 export default mapsRoute;
