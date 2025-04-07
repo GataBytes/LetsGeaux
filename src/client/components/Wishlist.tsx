@@ -1,56 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Typography, Grid, Card, Button } from '@mui/material';
-import { user } from '../../../types/models.ts';
+import { Container, Typography, Grid, Card } from '@mui/material';
 import Suggestion from './Suggestion.tsx';
+import { user } from '../../../types/models.ts';
 
 interface WishlistProps {
   user: user;
 }
 
-const Wishlist: React.FC<WishlistProps> = ({ user }) => {
-  const [wishlistSuggs, setWishlistSuggs] = useState([]);
-  const [wishMode, setWishMode] = useState(true)
-
-
+const Wishlist: React.FC<WishlistProps> = ({user}) => {
+  const [listing, setListing] = useState(true);
+  const [listSet, setListSet] = useState([]);
   const getAllWishlistSuggestions = () => {
-    console.log('getting');
-    axios.get(`/api/wishlist/${user.id}`).then(({ data }) => {
-      setWishlistSuggs(data);
-    }).catch((err) => console.error('unable to retrieve wishlist', err));
+    console.log('lawd, she tryin');
+    // axios.get(`/api/wishlist/${user.id}`).then((data) => {
+    //   console.log(data)
+    //   setListSet(data);
+    // }).catch((err) => console.error('did not grab wishes', err))
+    // console.log('still gotta get em');
   }
-  useEffect(() => getAllWishlistSuggestions(), []);
-
-const handleListDelete = () => {
-  axios.delete(`/api/wishlist/${user.id}`).then(() => {
-    getAllWishlistSuggestions();
-  }).catch((err) => {
-    console.error('unable to delete list', err);
-  })
-}
-
+  // useEffect(() => {
+  //   getAllWishlistSuggestions();
+  // }, [])
 
   return (
-    <Container>
-      {wishlistSuggs.map((currentSuggestion) => (
-        <Card key={currentSuggestion.id}>
-          <Suggestion
-            user={user}
-            wishMode={wishMode}
-            currentSuggestion={currentSuggestion}
-            getAllWishlistSuggestions={getAllWishlistSuggestions}
-          />
-        </Card>
+    <div>Stuff here</div>
+    // <Container>
+    //   {listSet.map((listSuggestion) => (
 
-      ))}
-      {wishlistSuggs.length
-      ? (
-        <Button onClick={handleListDelete}>Delete entire wishlist</Button>
-
-      ) : (
-        <Typography>Add new excursions to your wishlist on the Suggestions Page!</Typography>
-      )}
-    </Container>
+    //     <Card key={listSuggestion.id}>
+    //       <Suggestion listSuggestion={listSuggestion} listing={listing} setListing={setListing} />
+    //     </Card>
+    //   ))}
+    // </Container>
   )
 }
 
