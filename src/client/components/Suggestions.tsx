@@ -1,50 +1,74 @@
-// import React from 'react';
-// import axios from 'axios';
-// import ActivityForm from './ActivityForm';
-// import { Container, Card, Typography, Dialog, Grid, Avatar, } from '@mui/material'
-// import Suggestion from './Suggestion';
-
-// // const Grid = Grid2;
-// const Suggestions = () => {
-//   return (
-//     <Container>
-//       <Suggestion />
-//     </Container>
-//   )
-// }
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import { Container, Card, Button, Input, InputLabel, Typography, Accordion, Grid,  } from '@mui/material';
-import Activity from './Activity';
-import ActivityForm from './ActivityForm';
+import SuggestionForm from './SuggestionForm';
+import { Container, Card, Typography, Dialog, Grid, Avatar, Input, InputLabel, Button, SpeedDial, CircularProgress } from '@mui/material'
+import Suggestion from './Suggestion';
+import { user } from '../../../types/models.ts';
 
-const Activities = () => {
-  const [activitySet, setActivitySet] = useState([]);
-  const [editMode, setEditMode] = useState(false);
+interface SuggestionsProps {
+  user: user;
+}
+const Suggestions: React.FC<SuggestionsProps>= ({ user }) => {
 
-  const getAllActivities = () => {
-    axios.get('/api/activity').then(({data}) => {
+  const [editableSuggestion, setEditableSuggestion] = useState({});
+  const [suggestionSet, setSuggestionSet] = useState([]);
+  const [suggestionEditMode, setSuggestionEditMode] = useState(false);
+  const [dbSuggestionSet, setDbSuggestionSet] = useState([]);
+
+const getDbSuggestions = () => {
+  axios.get('/api/suggestions').then(({data}) => {
+    setDbSuggestionSet(data)
+  })
+}
+
+  const getAllSuggestions = () => {
+    axios.get('/api/suggestions/search').then(({data}) => {
       console.log(data);
-      setActivitySet(data);
+      setSuggestionSet(data);
     }).catch((err) => console.error('there was an issue', err));
   }
 
   useEffect(() => {
-    getAllActivities();
+    // getDbSuggestions();
+    getAllSuggestions();
   }, []);
+
   return (
     <Container>
-      <h2>Current Activities</h2>
-      {activitySet.map((act) => (
-        <Card key={act.name}>
-      <Activity act={act} getAllActivities={getAllActivities} editMode={editMode} />
-      </Card>
+      <h1>Suggested Excursions</h1>
+      {/* {dbSuggestionSet.map((currentSuggestion) => (
+        <Card key={currentSuggestion.title}>
+          <Suggestion
+          user={user}
+          currentSuggestion={currentSuggestion}
+          getAllSuggestions={getAllSuggestions}
+          setSuggestionEditMode={setSuggestionEditMode}
+          setSuggestionSet={setSuggestionSet}
+          setEditableSuggestion={setEditableSuggestion}
+          />
+        </Card>
+      ))} */}
+      {suggestionSet.map((currentSuggestion) => (
+        <Card key={currentSuggestion.title}>
+          <Suggestion
+          user={user}
+          currentSuggestion={currentSuggestion}
+          getAllSuggestions={getAllSuggestions}
+          setSuggestionEditMode={setSuggestionEditMode}
+          setSuggestionSet={setSuggestionSet}
+          setEditableSuggestion={setEditableSuggestion}
+          />
+        </Card>
       ))}
-      {/* <ActivityForm act={act}/> */}
-<ActivityForm />
+      {/* <SuggestionForm
+suggestionSet={suggestionSet}
+suggestionEditMode={suggestionEditMode}
+setSuggestionEditMode={setSuggestionEditMode}
+getAllSuggestions={getAllSuggestions}
+editableSuggestion={editableSuggestion}
+/> */}
     </Container>
   )
 }
 
-// export default Activities;
-export default Activities;
+export default Suggestions;

@@ -28,6 +28,11 @@ import ChatIcon  from '@mui/icons-material/TryOutlined';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import EventIcon from '@mui/icons-material/Event';
 import PinDropOutlinedIcon from '@mui/icons-material/PinDropOutlined';
+import AppShortcut from '@mui/icons-material/AppShortcut';
+import App from './App';
+import LocalActivityIcon from '@mui/icons-material/LocalActivity';
+import { Apps } from '@mui/icons-material';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 const drawerWidth = 240;
 
 type Anchor = 'left';
@@ -135,16 +140,16 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Maps'} />
               </ListItemButton>
             </ListItem>
-            {/* calendar
-            <ListItem key={'calendar'} disablePadding>
-              <ListItemButton component={Link}to='/calendar' onClick={handleDrawerClose}>
-                <ListItemIcon>
-                  <EventIcon />
-                </ListItemIcon>
-                <ListItemText primary={'Calendar'} />
-              </ListItemButton>
-            </ListItem> */}
-            {/* itinerary */}
+            {/*wishlist */}
+             <ListItem key={'wishlist'} disablePadding>
+               <ListItemButton component={Link}to='/wishlist' onClick={handleDrawerClose}>
+                 <ListItemIcon>
+                   <AppShortcut />
+                 </ListItemIcon>
+                 <ListItemText primary={'Wishlist'} />
+               </ListItemButton>
+             </ListItem>
+             {/* itinerary*/}
             <ListItem key={'itinerary'} disablePadding>
               <ListItemButton component={Link}to='/itinerary' onClick={handleDrawerClose}>
                 <ListItemIcon>
@@ -165,7 +170,7 @@ const NavDrawer: React.FC = () => {
             {/* Budget Buddy */}
             <ListItem key={'BudgetBuddy'} disablePadding>
               <ListItemButton component={Link} to="/budgetbuddy" onClick={handleDrawerClose}>
-                <ListItemIcon>💰</ListItemIcon>
+                <ListItemIcon><AttachMoneyIcon sx={{ color: 'grey' }} /></ListItemIcon>
                 <ListItemText primary="Budget Buddy" />
               </ListItemButton>
             </ListItem>
@@ -176,6 +181,14 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary="Route Choices" />
               </ListItemButton>
             </ListItem>
+            {/* <ListItem key={'Activities'} disablePadding>
+              <ListItemButton component={Link} to="/activities" onClick={handleDrawerClose}>
+                <ListItemIcon>
+                <LocalActivityIcon />
+                </ListItemIcon>
+                <ListItemText primary="Activities" />
+              </ListItemButton>
+            </ListItem> */}
           {/* logout */}
           <ListItem key={'logout'} disablePadding>
               <ListItemButton component={Link} to='/logout' onClick={handleLogout}>
@@ -185,7 +198,7 @@ const NavDrawer: React.FC = () => {
                 <ListItemText primary={'Logout'} />
               </ListItemButton>
             </ListItem>
-            
+            {/* Activites */}
 
         </List>
       </Drawer>

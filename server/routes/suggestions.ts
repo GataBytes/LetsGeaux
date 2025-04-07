@@ -32,21 +32,17 @@ const getTripadvisorLocationIds = async (query: string = "restaurant") => {
 
       console.error('failed to get ids', err);
     }
-}
-
-// This one queries trip advisor with an array of location ids and moves wanted info from the result to an object
-const getTripadvisorDetailedEntries = async (locations: number[]) => {
-  // console.log('deez loc', locations)
-  try {
-
-    const detailedEntries = await locations.map(async (location) => {
+  }
+  
+  // This one queries trip advisor with an array of location ids and moves wanted info from the result to an object
+  const getTripadvisorDetailedEntries = async (locations: number[]) => {
+    // console.log('deez loc', locations)
+    try {
       
-      const detailedEntry = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/details?language=en&currency=USD&key=${API_KEY}`)
-      // .then((locationQueryProperties) => {
-        // if (locationQueryProperties.hasOwnProperty('location_id')) {
-          
-        //   console.log('entry query Properties from the inside');
-        //   console.log('yo');
+      const detailedEntries = await locations.map(async (location) => {
+        const detailedEntry = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/details?language=en&currency=USD&key=${API_KEY}`)
+        // const advisorImage = await axios.get(`https://api.content.tripadvisor.com/api/v1/location/${location}/photos?language=en&key=${API_KEY}`)
+        // console.log('img', advisorImage);
         const {
           name,
           description,
@@ -57,26 +53,24 @@ const getTripadvisorDetailedEntries = async (locations: number[]) => {
           longitude,
           // price_level,
         } = detailedEntry.data;
-        // console.log('DE.D', detailedEntry.data)
+         console.log(name)//---------------- successfully shows name of each entry coming through
         const locationQueryDetailedEntry = {
           title: name,
           description,
-          // timeAvailable: hours.weekday_text,
+          // hours: hours.weekday_text,
           phoneNum: phone,
           // address: address_obj.address_string || "new orleans",
           latitude,
           longitude,
+          address: address_obj.address_string,
           // cost: price_level.length,
         }
-        // console.log('LQDE', locationQueryDetailedEntry)
-        // }
-        // })
-        // })
-        // console.log('Deetz!!');
-        // console.log(detailedEntry);
+        // ----------------------this log worked perfectly ONE TIME! other than that, I just get a huge response object with message: too many requests in one of the lower objects
+        // locationQueryDetailedEntry.image = advisorImage.data[0].images.large.url
         return locationQueryDetailedEntry;
       });
       const allDetailedEntries = Promise.all(detailedEntries);
+      return allDetailedEntries;
   } catch(err) {console.error(err)}
 }
 // and finally, this one grabs the image url
@@ -93,46 +87,58 @@ const getTripAdvisorImage = (locationId) => {
 // SEARCH flavored GET handling
 suggestionRouter.get('/search', async (req:any, res:any) => {
  try {
-   const locations = await getTripadvisorLocationIds()
-   const entries = await getTripadvisorDetailedEntries(locations)
-   console.log('ent', entries);
-  res.status(200).send(entries);
- } catch (err) {
-  console.error('had a hard time', err);
-  res.sendStatus(500);
- }
-  //    console.log('after 2nd return')
-  //    console.log(entries); 
-  //    console.log('no yo');
-  //   })
-    // .then(locations => {
-    // })
+  console.log('trying')
+   const locations: number[] = await getTripadvisorLocationIds().then((stuff) => {
+    getTripadvisorDetailedEntries(stuff).then((entries) => {
+      console.log('ent', entries);
+      // getTripAdvisorImage(locations)
+      res.status(200).send(entries);
+    })
 
-   // .then((locations) => {
-    // res.status(200).send(locations);
-    // console.log("locations");
-    //   getTripadvisorDetailedEntries().then((detailedEntries) => {
-      //     console.log(detailedEntries);
-      // })
-      // }).catch((err) => {
-      // } catch(err) {
-      //     console.error('failed to get suggestions', err);
-      //       res.sendStatus(500);
-
-      // }
-  // })
-})
+    }).catch((err) => {
+      console.error('had a hard time', err);
+      res.sendStatus(500);
+   })
+  } catch(err) {
+    throw err
+  }
+  })
 
 
 // GET request handling
 suggestionRouter.get('/', async (req: any, res: any) => {
 
-  const allSugg = await prisma.suggestion.findMany().then(()=> {
-    res.status(200).send('looks Like we Made it!!!');
-  }).catch((err:any) => {
+  try {
+
+    const allSuggs = await prisma.suggestion.findMany();
+    console.log(allSuggs)
+    res.status(200).send('an answer', allSuggs.data);
+  } catch( err:any) {
     console.error("FAIL!!", err);
     res.sendStatus(500);
-  });
+  };
 })
+
+// POST requests from suggestions page (suggestion component)
+suggestionRouter.post('/:userId', async(req: any, res: any) => {
+  console.log('da body', req.body)
+    const { userId } = req.params;
+  try {
+
+    const newSuggestion = await prisma.suggestion.create(req.body)
+    const { id } = newSuggestion;
+    const wishObj =  {
+      data: {
+        userId: +userId,
+        suggestionId: id,
+      }
+    }
+    const wishlistUserSuggestion = await prisma.userOnsuggestion.create(wishObj)
+    res.sendStatus(201);
+  } catch(err) {
+    console.error('failed to add Suggestion', err);
+    res.sendStatus(500);
+  }
+});
 
 export default suggestionRouter;

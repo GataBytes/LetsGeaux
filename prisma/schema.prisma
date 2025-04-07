@@ -8,40 +8,54 @@ datasource db {
 }
 
 model user {
-  id         Int          @id @default(autoincrement())
-  username   String       @db.VarChar(50)
-  email      String       @db.VarChar(50)
-  isVerified Boolean      @default(false)
-  phoneNum   String?      @db.VarChar(10)
-  isNotified Boolean      @default(false)
-  googleId   String       @unique
-  groupId    Int?
-  image      image[]
+  id           Int                @id @default(autoincrement())
+  username     String             @db.VarChar(50)
+  email        String             @db.VarChar(50)
+  isVerified   Boolean            @default(false)
+  phoneNum     String?            @db.VarChar(10)
+  isNotified   Boolean            @default(false)
+  googleId     String             @unique
+  groupId      Int?
+  image        image[]
   // post       post[]
-  reminder   reminder[]
-  suggestion suggestion[]
-  group      group?       @relation(fields: [groupId], references: [id])
-  vote       vote[]
-  itinerary  itinerary[]
+  reminder     reminder[]
+  // suggestion suggestion[]
+  group        group?             @relation(fields: [groupId], references: [id])
+  vote         vote[]
+  itinerary    itinerary[]
+  suggestion   userOnsuggestion[]
+  suggestionId Int?
 
   @@index([groupId], map: "user_groupId_fkey")
 }
 
+model userOnsuggestion {
+  id           Int         @id @default(autoincrement())
+  user         user?       @relation(fields: [userId], references: [id])
+  suggestion   suggestion? @relation(fields: [suggestionId], references: [id])
+  userId       Int?
+  suggestionId Int?
+}
+
 model suggestion {
-  id            Int        @id @default(autoincrement())
-  title         String     @db.VarChar(120)
-  upVotes       Int
-  downVotes     Int
-  created_at    DateTime   @default(now())
-  timeAvailable DateTime
-  cost          Int
-  address       String     @db.VarChar(50)
-  description   String     @db.MediumText
-  image         String     @db.TinyText
-  phoneNum      String     @db.VarChar(15)
+  id            Int                @id @default(autoincrement())
+  title         String             @db.VarChar(120)
+  upVotes       Int?
+  downVotes     Int?
+  created_at    DateTime           @default(now())
+  timeAvailable String?
+  cost          Int?
+  address       String             @db.VarChar(100)
+  description   String             @db.Text
+  image         String?            @db.Text
+  phoneNum      String?            @db.VarChar(50)
   userId        Int?
+  latitude      String?
+  longitude     String?
+  wishUser      userOnsuggestion[]
+  // activity      activity[]
   location      location[]
-  user          user?      @relation(fields: [userId], references: [id])
+  // user          user?      @relation(fields: [userId], references: [id])
 
   @@index([userId], map: "suggestion_userId_fkey")
 }
@@ -66,8 +80,8 @@ model itinerary {
 
 model activity {
   id          Int        @id @default(autoincrement())
-  name        String?    @db.VarChar(50)
-  description String     @db.VarChar(200)
+  name        String?    @db.VarChar(100)
+  description String     @db.VarChar(500)
   address     String?
   phone       String?    @db.VarChar(150)
   time        String?

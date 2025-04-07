@@ -25,6 +25,16 @@ import {
   ListItemText,
 } from '@mui/material';
 import { AddToQueueRounded, ArrowForwardIos } from '@mui/icons-material'
+import { user } from '../../../types/models.ts';
+
+interface SuggestionProps {
+  user: user;
+  getAllSuggestions: Function;
+  setSuggestionEditMode: Function;
+  getAllWishlistSuggestions: Function;
+  wishMode: Boolean;
+
+}
 
 /**
  * When the "add to itinerary" speed dial  button is pressed, the associated function will:
@@ -42,8 +52,94 @@ Faded translucent accordion to be set by lunch tomorrow.  [https://mui.com/mater
 
 
 // const Grid = Grid2;
-const Suggestion = () => {
+const Suggestion: React.FC<SuggestionProps> = ({
+  user,
+  currentSuggestion,
+  getAllSuggestions,
+  wishMode,
+  getAllWishlistSuggestions,
+  /*listSuggestion, setEditableSuggestion}*/
+}) => {
   const [expanded, toggleExpanded] = useState(false);
+
+
+  /* ---------Parts of the currentSuggestion
+  title, description, phoneNum, latitude, longitude, address
+  */
+
+  /**
+   * Activity Suggestion match points
+   */
+
+  /**
+   * How to handle separate posts..
+   * I can add a quality to the post function on this side to either add it to the wishlist get
+   * or let it just stay in the db. (maybe searchable with a "show all saved suggestions" button)
+   * maybe call it a wishlist id, but use a userId, so whenever a user with that Id shows up there,
+   * it'll only show up if it matches... Patch requests can add the id  to and take it away from the wishlist
+   * also via a button
+   *
+   * maybe also an "inWishlist"
+   */
+
+  // This is what occurs when the add to wishlist button is pressed. Calling a post request with wish markers to post the Suggestion
+  const addToWishlist = () => {
+    console.log(currentSuggestion);
+    console.log(user);
+    /**
+     * sugg values:[corresponding suggestion values will be below the first]
+     * address, description,  latitude,  longitude, phoneNum, title
+     * address, description, *latitude, *longitude, phoneNum, title, image (upVotes, downVotes = 0; timeAvailable coming soon:)
+     * MUST ADD[latitude, longitude, isWished?, WishedUserId]
+     */
+    // gather the needed values and put them into an axios post request in a similar way to activities
+    const { address, description, latitude, longitude, phoneNum, title } = currentSuggestion;
+
+    const details = {
+      data: {
+        address,
+        description,
+        latitude,
+        longitude,
+        phoneNum,
+        title,
+        upVotes: 0,
+        downVotes: 0,
+      }
+    }
+    axios.post(`/api/suggestions/${user.id}`, details).then(() => { }).catch(err => console.error('unable to save suggestion', err))
+  }
+
+  const handleAddToActivities = () => {
+    const details = {
+      data: {
+        address,
+        description,
+        phone: phoneNum,
+        name: title,
+      }
+  }
+  axios.post('/api/activity', details).then(() => {
+    if (wishMode) {
+      handleRemoveFromWishlist()
+    }
+  }).then(() => {
+    if (wishMode) {
+      getAllWishlistSuggestions();
+    }
+  }).catch((err) => {
+    console.error('unable to change suggestion', err);
+  })
+}
+
+
+const handleRemoveFromWishlist = () => {
+  axios.patch(`/api/wishlist/${currentSuggestion.id}/${user.id}`)
+  .then(() => {
+    getAllWishlistSuggestions();
+  })
+  .catch((err) => console.error('sorry, tex', err));
+}
 
   const handleExpansion = () => {
     toggleExpanded((prevExpanded) => !prevExpanded)
@@ -51,53 +147,71 @@ const Suggestion = () => {
 
 
   }
+  const { title, description, phoneNum, latitude, longitude, address, hours, image } = currentSuggestion;
   return (
     <Container>
       <Grid item size={6}>
         <Card>
-          <Typography variant="h3">Featured Foray:</Typography>
-          <Button variant="filled">Next attraction</Button>
-          <Button variant="filled">add to activities</Button>
+          {/* <Typography variant="h3">Featured Foray:</Typography> */}
+          {/* <Button variant="filled">Next attraction</Button> */}
+          <Button variant="filled" onClick={handleAddToActivities}>add to activities!</Button>
+          {wishMode
+          ?
+          <Button onClick={handleRemoveFromWishlist}>Remove from wishlist</Button>
+          :
+          <Button onClick={addToWishlist} variant="filled">add to wishlist!</Button>
+          }
           <ImageList>
             <ImageListItem key="ItemText" cols={4}>
               <ListItemText >
                 <Typography variant="h2">
-                  New Orleans Jazz Museum
+                  {title}
                 </Typography>
               </ListItemText>
-              <img src="https://media-cdn.tripadvisor.com/media/photo-o/0b/92/b7/85/20160608-102742-largejpg.jpg"></img>
-              <Box></Box>
+              <img width="50" height="50" src="https://static.vecteezy.com/system/resources/previews/002/187/723/original/coming-soon-neon-signs-style-text-free-vector.jpg"></img>
+              <Typography>{description}</Typography>
+              <Typography><b>Contact number:</b> {phoneNum}</Typography>
+              <Typography><b>address:</b> {address}</Typography>
+              {hours
+                ? (
+                  <Box>
+                    <Typography><b>Hours of operation:</b></Typography>
+                  </Box>
+
+                ) : (
+                  <Typography><em>Operation hours unavailable</em></Typography>
+                )}
               <Accordion
                 expanded={expanded}
                 onChange={handleExpansion}
                 slots={{ transition: Fade as AccordionSlots['transition'] }}
-            //     sx={[
-            //       expanded
-            //  ? {
-            //         [`& .${AccordionClasses.region}`]: {
-            //           height: 'auto',
-            //         },
-            //         [`& .${accordionDetailsClasses.root}`]: {
-            //           display: 'block',
-            //         },
-            //       }
-            //       : {
-            //         [`& .${accordionClasses.region}`]: {
-            //           height: 0,
-            //         },
-            //         [`& .${accordionDetailsClasses.root}`]: {
-            //           display: 'none',
-            //         },
-            //       }
-            //     ]}
-          >
-              <Typography variant="h4">The New Orleans Jazz Museum celebrates jazz in the city where it was born. Through dynamic interactive exhibits, multi-generational educational programming, research facilities, and engaging musical performances, the music New Orleans made famous is explored in all its forms. Housed in the historic Old U.S. Mint, strategically located at the intersection of the French Quarter and the Frenchmen Street live music corridor, the New Orleans Jazz Museum is in the heart of the city’s music scene.</Typography>
-            </Accordion>
-          </ImageListItem>
-        </ImageList>
-      </Card>
+              //     sx={[
+              //       expanded
+              //  ? {
+              //         [`& .${AccordionClasses.region}`]: {
+              //           height: 'auto',
+              //         },
+              //         [`& .${accordionDetailsClasses.root}`]: {
+              //           display: 'block',
+              //         },
+              //       }
+              //       : {
+              //         [`& .${accordionClasses.region}`]: {
+              //           height: 0,
+              //         },
+              //         [`& .${accordionDetailsClasses.root}`]: {
+              //           display: 'none',
+              //         },
+              //       }
+              //     ]}
+              >
+                <Typography></Typography>
+              </Accordion>
+            </ImageListItem>
+          </ImageList>
+        </Card>
 
-    </Grid>
+      </Grid>
 
 
     </Container >

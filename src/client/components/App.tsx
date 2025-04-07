@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
+import {
   Routes,
   Route,
   BrowserRouter as Router,
@@ -7,34 +7,34 @@ import {
   useNavigate,
   Navigate,
   useLocation,
-  Link  } from 'react-router-dom';
+  Link
+} from 'react-router-dom';
 import axios from 'axios';
-
 
 // feature routes
 import Home from './Home.tsx';
 import Login from './Login.tsx';
-import Maps from './Maps.tsx'
-import Suggestions from './Suggestions.tsx'
-import ChatBot from './ChatBot.tsx'
+import Maps from './Maps.tsx';
+import Suggestions from './Suggestions.tsx';
+import ChatBot from './Chat/ChatBot.tsx';
 import Itinerary from './Itineraray.tsx';
 import BudgetBuddy from './BudgetBuddy/BudgetBuddy.tsx';
-import Activities from './Activities.tsx';
+import Activities from './NEWActivties.tsx';
 import ActivitiesChoices from './RouteChoices';
 import Logout from './Logout.tsx';
 import Calendar from './Calendar.tsx';
 import RouteChoices from './RouteChoices.tsx'
+import Wishlist from './Wishlist.tsx';
 import { user } from '../../../types/models.ts';
+//import Activity from './NEWActivties.tsx';
 
-
-
-
-const App: React.FC= () => {
+const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<user | null>(null)
+  const [user, setUser] = useState<user | null>(null);
   // Check Auth
   useEffect(() => {
-    const checkAuth = async () => { //? type 
+    const checkAuth = async () => {
+      //? type
       try {
         const response = await axios.get('/api/check-auth');
         setIsAuthenticated(response.data.isAuthenticated);
@@ -44,30 +44,30 @@ const App: React.FC= () => {
           setUser(fetchedUser);
           localStorage.removeItem('sessionId');
         }
-      }
-      catch (error) {
+      } catch (error) {
         setIsAuthenticated(false);
         console.error('Server: Err checking auth status', error);
       }
     };
-    checkAuth(); 
-  }, []); 
-  
-  // Protected Route
-  const ProtectedRoute: React.FC<{children: React.ReactNode}> = ({children}) => {
-    if (!isAuthenticated) {
-      return <Navigate to="/login" replace />;
-    }
-    return <>{children}</>
-  };
+    checkAuth();
+  }, []);
 
+  // Protected Route
+  const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+    children
+  }) => {
+    if (!isAuthenticated) {
+      return <Navigate to='/login' replace />;
+    }
+    return <>{children}</>;
+  };
 
   return (
     <Routes>
 
-      <Route path="/login" element={!isAuthenticated ? <Login /> :  <Navigate to="/" replace />} /> 
-      
-      <Route path="/" element={ 
+      <Route path="/login" element={!isAuthenticated ? <Login /> :  <Navigate to="/" replace />} />
+
+      <Route path="/" element={
         <ProtectedRoute>
          {user && <Home user = {user}/> }
         </ProtectedRoute>
@@ -79,7 +79,12 @@ const App: React.FC= () => {
       }/>
       <Route path="/suggestions" element={
         <ProtectedRoute>
-          <Suggestions/>
+          {user && <Suggestions user = {user} />}
+        </ProtectedRoute>
+      }/>
+      <Route path="/wishlist" element={
+        <ProtectedRoute>
+          {user && <Wishlist user = {user} />}
         </ProtectedRoute>
       }/>
       <Route path="/chatbot" element={
@@ -92,9 +97,9 @@ const App: React.FC= () => {
           {user && <Itinerary user = {user}/>}
         </ProtectedRoute>
       }/>
-      
+
       <Route path="/budgetbuddy" element={
-        <ProtectedRoute> 
+        <ProtectedRoute>
           <BudgetBuddy />
         </ProtectedRoute>
       }/>
@@ -103,13 +108,20 @@ const App: React.FC= () => {
           <RouteChoices/>
         </ProtectedRoute>
       }/>
+
+<Route path='/activities' element={
+        <ProtectedRoute>
+          <Activities/>
+        </ProtectedRoute>
+      }/>
+
       <Route path="/logout" element={
-        <ProtectedRoute> 
+        <ProtectedRoute>
         <Logout />
       </ProtectedRoute>
       } />
     </Routes>
-  )
+  );
 };
 
 export default App;

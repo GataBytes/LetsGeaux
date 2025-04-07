@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, TextField, Button, Box } from '@mui/material';
+import { Container, Typography, TextField, Button, Box, Card, CardContent, CardActions } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -8,24 +8,31 @@ import { isBefore, isAfter, isSameDay } from 'date-fns';
 import { eachDayOfInterval } from 'date-fns';
 import axios from 'axios';
 import { user } from '../../../types/models.ts';
+import Activity from './NEWActivties.tsx'; 
 
-
-
-interface ItineraryProps{
-user: user
+interface ItineraryProps {
+  user: user;
 }
 
-
-
-const Itinerary: React.FC <ItineraryProps>= ({user}) => {
+const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]); // Store selected dates
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]); 
   const [itineraryName, setItineraryName] = useState('');
   const [itineraryNotes, setItineraryNotes] = useState('');
   const [itineraries, setItineraries] = useState<any[]>([]);
   const [editingItinerary, setEditingItinerary] = useState<any | null>(null);
   const [error, setError] = useState<string>('');
+
+  // Function to add activity to itinerary
+  const addActivityToItinerary = async (itineraryId: string, activityData: any) => {
+    try {
+      const response = await axios.post(`/api/itinerary/${itineraryId}/activity`, activityData);
+      console.log('Activity added:', response.data);
+    } catch (error) {
+      console.error('Error adding activity:', error);
+    }
+  };
 
   // Handle date change and determine start and end dates
   const handleDateChange = (newDate: Date | null) => {
@@ -182,9 +189,7 @@ const Itinerary: React.FC <ItineraryProps>= ({user}) => {
   };
 
   return (
-    
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      {/* {console.log(user)} */}
       <Container>
         <Typography variant="h4" gutterBottom>
           {editingItinerary ? 'Edit Itinerary' : 'Choose Dates for Your Trip'}
@@ -241,23 +246,25 @@ const Itinerary: React.FC <ItineraryProps>= ({user}) => {
         </Box>
 
         <Box mt={4}>
-          <Typography variant="h5">Created Itineraries</Typography>
+          <Typography variant="h5">Create Your Itinerary</Typography>
           {itineraries.map((itinerary, index) => (
-            <Box key={index} mb={2}>
-              <Typography variant="h6">{itinerary.name}</Typography>
-              <Typography variant="body1">{itinerary.notes}</Typography>
-              <Typography variant="body2">{`Begin: ${new Date(itinerary.begin).toLocaleString()}`}</Typography>
-              <Typography variant="body2">{`End: ${new Date(itinerary.end).toLocaleString()}`}</Typography>
-
-              <Box display="flex" gap={2}>
+            <Card key={index} sx={{ mb: 2 }}>
+              <CardContent>
+                <Typography variant="h6">{itinerary.name}</Typography>
+                <Typography variant="body1">{itinerary.notes}</Typography>
+                <Typography variant="body2">{`Begin: ${new Date(itinerary.begin).toLocaleString()}`}</Typography>
+                <Typography variant="body2">{`End: ${new Date(itinerary.end).toLocaleString()}`}</Typography>
+              </CardContent>
+              <CardActions>
                 <Button variant="contained" color="secondary" onClick={() => handleEditClick(itinerary)}>
                   Edit
                 </Button>
                 <Button variant="contained" color="error" onClick={() => handleDelete(itinerary.id)}>
                   Delete
                 </Button>
-              </Box>
-            </Box>
+              </CardActions>
+              <Activity itineraryId={itinerary.id} addActivity={addActivityToItinerary} />
+            </Card>
           ))}
         </Box>
       </Container>

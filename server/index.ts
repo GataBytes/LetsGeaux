@@ -3,7 +3,7 @@ import path from 'path';
 import passport from 'passport';
 import session from 'express-session';
 import dotenv from 'dotenv';
-// import { urlencoded } from 'express'; 
+// import { urlencoded } from 'express';
 import cors from 'cors';
 import { PrismaClient } from "@prisma/client";
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
@@ -19,6 +19,7 @@ import mapsRoute from './routes/maps';
 import chatsRoute from './routes/chats';
 import itineraryRoute from './routes/itinerary';
 import activityRouter from './routes/activities';
+import wishlistRouter from './routes/wishlist';
 
 dotenv.config();
 
@@ -154,7 +155,7 @@ app.use('/api/users/', usersRoute);
 app.use('/api/chats/', chatsRoute);
 app.use('/api/maps/', mapsRoute);
 app.use('/api/suggestions', suggestionRouter);
-
+app.use('/api/wishlist', wishlistRouter);
 
 app.use('/api/itinerary', itineraryRoute)
 app.use('/api/budget', budgetRoutes);
