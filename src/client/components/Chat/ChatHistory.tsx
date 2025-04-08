@@ -161,7 +161,7 @@ const ChatHistory: React.FC<ChatHistProps> = ({ user }) => {
               Change Name 
             </Button>
             <Divider/>
-            <Button variant='outlined'
+            <Button 
             variant='contained'
             onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
               handleDelete(session.sessionId)}}
