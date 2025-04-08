@@ -19,9 +19,9 @@ const MainAppBar: React.FC= () => {
   let anchorElUser; // this has something to do with the preferences nav 
   
   return(
-    <AppBar position='static'>
+    <AppBar position='static' sx={{ background: 'purple'}} >
       <Container maxWidth='xl' sx={{ sm: 'block' }}>
-        <Toolbar disableGutters>
+        <Toolbar disableGutters >
           <NavDrawer/>
           <StreetcarIcon sx={{ color:'black', display: { xs: 'none', 'md': 'flex', sm:'block'}, mr: 1}} />
           <Typography 
