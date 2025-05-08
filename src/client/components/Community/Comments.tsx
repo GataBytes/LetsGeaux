@@ -32,7 +32,6 @@ interface CommentsProps {
 const Comments: React.FC<CommentsProps> = ({ user, commentSet, getAllComments, commentEditMode, endComments, postId, setEditableComment, setCommentEditMode }) => {
   return (
     <Container sx={{backgroundColor: "primary"}}>
-      <Button title="Back to posts" sx={{ borderWidth: 4, color: 'black', mt: "4px", mb: "4px" }}  onClick={endComments}><PiArrowBendDoubleUpLeftBold /></Button>
       {commentSet.map((currentComment: any) => (
         <Box key={currentComment.id} sx={{ backgroundColor: 'primary' }}>
       <Comment
@@ -43,6 +42,7 @@ const Comments: React.FC<CommentsProps> = ({ user, commentSet, getAllComments, c
       setCommentEditMode={setCommentEditMode}
       commentEditMode={commentEditMode}
       />
+          <Button title="Back to posts" sx={{ borderWidth: 4, color: 'black', mt: "4px", mb: "4px" }}  onClick={endComments}><PiArrowBendDoubleUpLeftBold /></Button>
       </Box>
       ))}
 

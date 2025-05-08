@@ -10,12 +10,13 @@ import {
   Grid,
   TextField,
   Button,
+  IconButton,
   Input,
 } from '@mui/material';
 import { PiPencilLineBold } from "react-icons/pi";
 import { PiNotePencilFill } from "react-icons/pi";
 import { PiXFill } from "react-icons/pi";
-
+import SendRounded from '@mui/icons-material/SendRounded';
 import { useForm } from 'react-hook-form';
 
 type FormFields = {
@@ -84,7 +85,8 @@ const CommentForm: React.FC<CommentFormProps> = ({ user, postId, commentEditMode
   }
   return (
     <Container>
-      <Grid container spacing={3}>
+      <Grid sx={{ position: "relative" }}container spacing={3}>
+        
         {/* <Typography>Leave a comment</Typography> */}
         <form onSubmit={handleSubmit(submitComment)}>
           <TextField
@@ -92,13 +94,17 @@ const CommentForm: React.FC<CommentFormProps> = ({ user, postId, commentEditMode
             rows="5"
             {...register("body")}
             sx={{
+              height: '50',
+              width: '50',
+              padding: '15px',
+              textAlign: "center",
               '& .MuiOutlinedInput-root': {
           borderRadius: 4,
         }
             }}
             name="body"
             type="textarea"
-            placeholder="Write your own comment"
+            placeholder="Write a comment"
           />
           {commentEditMode ? (
             <Button title="Cancel Edit" sx={{ borderWidth: 4, color: 'black' }} onClick={abortEdit}><PiXFill/></Button>
@@ -107,9 +113,21 @@ const CommentForm: React.FC<CommentFormProps> = ({ user, postId, commentEditMode
             null
           )}
           {commentEditMode ? (
-            <Button title="amend comment" sx={{ borderWidth: 4, color: 'black' }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "changing.." : <PiNotePencilFill />}</Button>
+            <Button title="amend comment" sx={{
+              borderWidth: 4,
+              color: 'black',
+              position: "absolute",
+              bottom: 8,
+              right: 8,
+            }}  type="submit" disabled={isSubmitting}>{isSubmitting ? "changing.." : <PiNotePencilFill style={{ color: "black" }}/>}</Button>
           ) : (
-            <Button title="post comment" sx={{ borderWidth: 4, color: 'black' }} type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending.." : <PiPencilLineBold />}</Button>
+            <IconButton title="post comment" sx={{
+              borderWidth: 4,
+              color: 'black',
+              position: "absolute",
+              bottom: 8,
+              right: 8,
+            }} type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending.." : <SendRounded sx={{color: "#bbf451"}}/>}</IconButton>
           )
           }
         </form>

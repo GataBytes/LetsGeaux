@@ -10,8 +10,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-// import FilledInput from '@mui/material/FilledInput';
-// import Divider from '@mui/material/Divider';
+import FilledInput from '@mui/material/FilledInput';
+import Divider from '@mui/material/Divider';
 import { user } from '../../../../types/models.ts'
 interface partyProps {
   user: user;
@@ -46,7 +46,7 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
       // onPartyCreated();
       setPartyId(id);
       setPartySuccess(true);
-      setTimeout(() => closeModal(), 2000)
+      // setTimeout(() => closeModal(), 10000)
       setTimeout(() => setPartySuccess(false), 10000)
       await addUserToParty(userId, id, partyName);
       onPartyCreated();
@@ -72,8 +72,8 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
       setInviteSuccess(true);
       setInputValue('');
       setEmails([]);
-      setTimeout(() => closeModal(), 3000)
-      setTimeout(() => setInviteSuccess(false), 4000)
+      setTimeout(() => closeModal(), 2000)
+      setTimeout(() => setInviteSuccess(false), 2000)
     } catch (error) {
         console.error('could not send email', error)
     }
@@ -140,9 +140,9 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
               Party Created!
             </Typography>
           )}
-          {/* <Divider/> */}
+          <Divider/>
         {/* Evite */}
-          {/* <Typography variant='subtitle1' sx={{ mt: 2 }}>
+          <Typography variant='subtitle1' sx={{ mt: 2 }}>
             Invite your friends to join your travel party
           </Typography>
           <FilledInput
@@ -172,11 +172,11 @@ const CreateParty: React.FC<partyProps> = ({user, onPartyCreated}) => {
           )}
           <Typography variant="h6" color="text.secondary" sx={{ mt: 1 }}>
             You can also invite friends later from your party dashboard.
-          </Typography> */}
+          </Typography>
         </DialogContent>
-        {/* <DialogActions>
+        <DialogActions>
           <Button variant='contained' onClick={closeModal}>Close</Button>
-        </DialogActions> */}
+        </DialogActions>
       </Dialog>
     </React.Fragment>
   )

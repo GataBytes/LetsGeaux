@@ -20,7 +20,9 @@ import { user } from '../../../../types/models';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+// import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
+
 import dayjs from 'dayjs';
 import IconButton from '@mui/material/IconButton';
 import { PiTrash } from 'react-icons/pi';
@@ -546,7 +548,7 @@ for (const activity of sortedActivities) {
                   }}
                 />
 
-                <TimePicker
+                <MobileTimePicker
                   label='Activity Time '
                   value={
                     formData.time

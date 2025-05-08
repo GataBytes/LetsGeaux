@@ -7,9 +7,12 @@ import {
   Switch,
   FormControlLabel,
   Modal,
+  IconButton
 } from '@mui/material';
 import { useImageContext } from './ImageContext';
 import axios from 'axios'
+import { PiTrash } from 'react-icons/pi';
+
 interface Image {
   id: number;
   url: string;
@@ -35,7 +38,7 @@ const modalStyle = {
   transform: 'translate(-50%, -50%)',
   width: 400,
   bgcolor: 'background.paper',
-  borderRadius: 2,
+  borderRadius: 4,
   boxShadow: 24,
   p: 4,
 };
@@ -110,7 +113,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
   };
 
   return (
-    <Box p={2}>
+    <Box p={2} border='4px solid black' sx={{ borderRadius: 4 }}>
       <Typography variant="h4" align="center" gutterBottom>
         Uploaded Images
       </Typography>
@@ -128,7 +131,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
           variant="contained"
           onClick={handlePrev}
           disabled={imageChunks.length <= 1}
-          fullWidth
+
         >
           Previous
         </Button>
@@ -136,7 +139,7 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
           variant="contained"
           onClick={handleNext}
           disabled={imageChunks.length <= 1}
-          fullWidth
+
         >
           Next
         </Button>
@@ -190,6 +193,8 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
                 width: '100%',
                 textAlign: 'center',
                 backgroundColor: 'white',
+                position: 'relative',
+                pb: 5
               }}
             >
               <img
@@ -204,15 +209,20 @@ const ImageDisplay: React.FC<ImageDisplayProps> = ({ userId }) => {
               <Typography variant="body2" sx={{ fontWeight: 500, mt: 1 }}>
                 Notes: {image.notes}
               </Typography>
-              <Button
-                onClick={() => openConfirm(image)}
-                variant="contained"
-                color="black"
-                sx={{ mt: 1 }}
-                fullWidth
-              >
-                Delete
-              </Button>
+              <Box>
+                <IconButton
+                  onClick={() => openConfirm(image)}
+                  variant="contained"
+                  color="black"
+                  sx={{
+                    position: 'absolute',
+                    bottom: 8,
+                    right: 8,
+                  }}
+                >
+                  <PiTrash />
+                </IconButton>
+              </Box>
             </Box>
           ))}
         </Box>

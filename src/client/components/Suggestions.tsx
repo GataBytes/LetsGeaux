@@ -115,7 +115,7 @@ const getApiSuggestions = (query = "Restaurants") => {
         key={currentSuggestion.fsq_id}
         sx={{
           border: "4px solid black",
-          borderRadius: "4",
+          borderRadius: 4,
           p: 4,
           mb: "8px"
         }}

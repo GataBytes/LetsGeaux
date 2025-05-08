@@ -24,7 +24,8 @@
   import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
   import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
   import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-  import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+  // import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+  import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
   import dayjs from 'dayjs';
   import { useSnackbar } from 'notistack';
   import { PiTrash } from 'react-icons/pi';
@@ -703,7 +704,7 @@
                     }}
                   />
 
-                  <TimePicker
+                  <MobileTimePicker
                     label='Activity Time'
                     value={
                       formData.time

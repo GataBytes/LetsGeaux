@@ -8,7 +8,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+// import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
+
 //used to compare dates for range seletion
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore)
@@ -99,7 +101,7 @@ const Calendar: React.FC<CalendarProps> = ({
         {(startDate || endDate) && (
           <Box display="flex" gap={2} justifyContent="center" mt={2}>
             {startDate && (
-              <TimePicker
+              <MobileTimePicker
                 label="Start Time"
                 value={startDate}
                 onChange={(newTime) => {
@@ -133,7 +135,7 @@ const Calendar: React.FC<CalendarProps> = ({
             )}
             
             {endDate && (
-              <TimePicker
+              <MobileTimePicker
                 label="End Time"
                 value={endDate}
                 onChange={(newTime) => {

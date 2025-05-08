@@ -34,7 +34,7 @@ const handleListDelete = () => {
   return (
     <Container>
       {wishlistSuggs.map((currentSuggestion) => (
-        <Card sx={{ mb: 4 }} key={currentSuggestion.id}>
+        <Card sx={{ mb: 4, borderRadius: 4, backgroundColor: "#C2A4F8"}} key={currentSuggestion.id}>
           <Suggestion
             user={user}
             isDb={true}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import dayjs from 'dayjs';
 import {
   Container,
   Typography,
@@ -9,6 +9,7 @@ import {
   Paper,
   Grid,
   Box,
+  Stack,
   Button,
   IconButton,
 } from '@mui/material';
@@ -153,13 +154,16 @@ const commentCredentialCheck = () => {
       position: 'relative',
       border: "4px solid black",
       borderRadius: 4,
+      textAlign: "center",
       p: 4,
       mb: "8px"
       }}
       >
         <Typography>{body}</Typography>
         <Typography>By: {postName}</Typography>
-        <Box sx={{ borderRadius: 4 }} display="flex" alignItems="flex-start" gap={1}>
+              <Typography>On {dayjs(currentComment.createdAt).format('MMMM D, YYYY')} at {dayjs(currentComment.createdAt).format('hh:mm a')}</Typography>
+        
+        <Stack sx={{ borderRadius: 4, justifyContent: "center"}} display="flex" alignItems="flex-start" direction="row" gap={1}>
         {hasLiked ? (
           <Button title="Remove like" sx={{
             borderWidth: 4,
@@ -213,7 +217,7 @@ const commentCredentialCheck = () => {
         ) : (
           null
         )}
-        </Box>
+        </Stack>
 
     </Box>
   )

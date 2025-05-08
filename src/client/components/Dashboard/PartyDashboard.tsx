@@ -54,7 +54,8 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   const navigate = useNavigate()
   const searchParams = new URLSearchParams(location.search);
   const numericPartyId = parseInt(partyId || '', 10);
-  const partyName = searchParams.get('name')
+  // const partyName = searchParams.get('name')
+  const [partyName, setPartyName] = useState<party['name']>('');
   const userId = user.id;
   //* Members and Emails Constants *//
   const [partyMembers, setPartyMembers] = useState<PartyMember[]>([]);
@@ -89,6 +90,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     fetchViewCode(numericPartyId);
     getUsersForParty(numericPartyId);
     getEmailLog(partyId);
+    getPartyName(partyId);
   }, [numericPartyId]);
 
   // Key Down for Enter & Esc //
@@ -111,6 +113,17 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   
 
   // GET REQUESTS //
+  //* Party Name *//
+  const getPartyName = async (partyId: string) => {
+    try {
+      const response = await axios.get(`/api/party/${partyId}`);
+      console.log(`party info from dash ${response.data.name}`)
+      setPartyName(response.data.name);
+
+    } catch (error) {
+      console.error(`Failed to retrieve name for ${partyId}`)
+    };
+  };
   //* Member List *//
   const getUsersForParty = async (partyId: number) => {
     try {
@@ -124,7 +137,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
       setPartyMembers(userObjects);
     } catch (error) {
       console.error('failed to find members for one or all parties');
-    }
+    };
   };
 
   //* Get Itinerary View Code *//
@@ -168,17 +181,17 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
     partyName: string,
     userId: number,
     partyId: string,
-    viewCode: string,
+    // viewCode: string,
   ) => {
     // console.log(`${partyName} @ send email party dash`)
-    console.log(`view code at evite ${viewCode}`)
+    // console.log(`view code at evite ${viewCode}`)
     try {
       await axios.post('/api/party/sendInvite', {
         emails: emailList,
         partyName: partyName,
         userId: userId,
         partyId: partyId,
-        viewCode: viewCode
+        // viewCode: viewCode
       });
       setInviteSuccess(true);
       setInputValue('');
@@ -268,7 +281,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
   return (
     <React.Fragment>
       {/* Party Page */}
-      <Box sx={{ p:2 }}>
+      <Box sx={{ p:2, flexDirection:  'column' }}>
         {/* Title */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4 }}>
           <Typography variant='h1'sx={{ textAlign: 'center', mr: 2 }}
@@ -280,9 +293,11 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'column',
             gap: 4,
             overflowX: 'auto',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center'
           }}
         >
           {/* Itinerary */}
@@ -294,203 +309,229 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
             />
           </Box> 
           {/* Party Info */}
-          <Card
-            sx={{
-              minWidth: 300,
-              maxWidth: 350,
-              flexShrink: 0,
-              p: 2,
-              border: '4px solid black',
-              borderRadius: 4,      
-              backgroundColor: '#C2A4F8',
-              alignSelf: 'flex-start',
-              
-            }}
-          >
-            <CardHeader
-              title="Party Info"
-              action={
-                <IconButton
-                  onClick={handleInfoExpandClick}
-                  aria-expanded={infoExpanded}
-                  aria-label="show more"
-                >
-                  <PiCaretCircleDownBold/>
-                </IconButton>
-              }
-            />
-            <Collapse in={infoExpanded} timeout="auto" unmountOnExit>
-              <CardContent>
-                <Box
-                  sx={{
-                    border: '4px solid black',
-                    borderRadius: 4,
-                    p: 2,
-                    mb: 2,
-                    boxShadow: '4px 4px 0px black',
-                  }}
-                >
-                  <Stack direction='row' justifyContent='center'>
-                    <Typography variant='h5' textAlign='center'>
-                      Party Members
-                    </Typography>
-                    <ResponsiveToolTip title="Manage Party" >
-                      <IconButton size="small" onClick={renameModal}>
-                        <PiPencilBold />
-                      </IconButton>
-                    </ResponsiveToolTip>
-                  </Stack>
-                  <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
-                    {partyMembers.map(member => (
-                      <ListItem>
-                        <ListItemAvatar>
-                          <Avatar src={member.avatar}/>
-                        </ListItemAvatar>
-                      <Typography variant='body1' component='li' key={member.id}>
-                        {member.username}
-                      </Typography>
-                      </ListItem>
-                    ))}
-                  </Box>
-                </Box>
-                <AddMember
-                  user={user}
-                  partyId={numericPartyId}
-                  partyName={partyName}
-                  getMembers={getUsersForParty}
-                />
-                {/* Email Handling */}
-                <Button
-                  size='medium'
-                  // color='secondary'
-                  variant='contained'
-                  onClick={openModal}
-                  sx={{ width: 'auto', m: 'auto', p: 'auto' }}
-                >
-                  Send an E-Vite
-                </Button>
-                <Dialog
-                  open={open}
-                  onClose={closeModal}
-                  slotProps={{
-                    paper: {
-                      sx: { border: '2px solid black',
-                        borderRadius: 4,
-                        boxShadow: '4px 4px 0px black',
-                        },
-                    }
-                  }}
-                >
-                  <Box
-                    component="form"
-                    onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                      e.preventDefault();
-                      if (emails.length > 0) {
-                        setLoading(true);
-                        sendEmail(emails, partyName, userId, partyId, viewCode)
-                          .finally(() => setLoading(false));
-                      }
-                    }}
+          <Box>
+            <Card
+              sx={{
+                width: isMobile ? 350 :' 512px',
+                flexShrink: 0,
+                p: 2,
+                border: '4px solid black',
+                borderRadius: 4,      
+                backgroundColor: '#C2A4F8',
+                alignSelf: 'flex-start',
+                
+              }}
+            >
+              <CardHeader
+                title="Party Info"
+                action={
+                  <IconButton
+                    onClick={handleInfoExpandClick}
+                    aria-expanded={infoExpanded}
+                    aria-label="show more"
                   >
-                    <Typography variant='subtitle1' sx={{ mt: 2 }}>
-                      Invite your friends to join your travel party
-                    </Typography>
-                    <TextField
-                      id='email'
-                      placeholder='Enter Multiple Emails'
-                      type='text'
-                      fullWidth
-                      value={inputValue}
-                      onChange={event => {
-                        const raw = event.target.value;
-                        setInputValue(raw);
-                        const parsedEmails = raw
-                          .split(',')
-                          .map(email => email.trim())
-                          .filter(email => email.length > 0);
-                        setEmails(parsedEmails);
-                      }}
-                    />
-                    <Button
-                      sx={{ mt: 1 }}
-                      variant='contained'
-                      type='submit'
-                      disabled={emails.length === 0 || loading}
-                    >
-                      {loading ? <CircularProgress size={24} color="inherit" /> : 'Invite'}
-                    </Button>
-                    {inviteSuccess && (
-                      <Typography sx={{ mt: 1, color: 'green' }}>
-                        Invite sent successfully!
-                      </Typography>
-                    )}
-                  </Box>
-                </Dialog>
-                {emailLog.length > 0 && (
-                  <Container
+                    <PiCaretCircleDownBold/>
+                  </IconButton>
+                }
+              />
+              <Collapse 
+                in={infoExpanded} 
+                timeout={{
+                  enter: 500,    
+                  exit: 500,     
+                }}
+                easing={{
+                  enter: 'cubic-bezier(0.4, 0, 0.2, 1)',  
+                  exit: 'cubic-bezier(0.4, 0, 0.2, 1)',   
+                }}
+              >
+                <CardContent>
+                  <Box
                     sx={{
-                      maxWidth: 500,
                       border: '4px solid black',
-                      borderRadius: 2,
-                      margin: '0 auto',
+                      borderRadius: 4,
                       p: 2,
+                      mb: 2,
                       boxShadow: '4px 4px 0px black',
                     }}
                   >
-                    <Typography variant='h5' gutterBottom>
-                      Sent Invitations
-                    </Typography>
-                    <Box
-                      component='ul'
-                      sx={{ listStyle: 'none', padding: 0, m: 0 }}
-                    >
-                      {emailLog.map((mail, i) => (
-                        <Typography
-                          key={i}
-                          variant='body1'
-                          component='li'
-                          sx={{ mb: 0.5 }}
-                        >
-                          {mail}
+                    <Stack direction='row' justifyContent='center'>
+                      <Typography variant='h5' textAlign='center'>
+                        Party Members
+                      </Typography>
+                      <ResponsiveToolTip title="Manage Party" >
+                        <IconButton size="small" onClick={renameModal}>
+                          <PiPencilBold />
+                        </IconButton>
+                      </ResponsiveToolTip>
+                    </Stack>
+                    <Box component='ul' sx={{ listStyle: 'none', pl: 0 }}>
+                      {partyMembers.map(member => (
+                        <ListItem>
+                          <ListItemAvatar>
+                            <Avatar src={member.avatar}/>
+                          </ListItemAvatar>
+                        <Typography variant='body1' component='li' key={member.id}>
+                          {member.username}
                         </Typography>
+                        </ListItem>
                       ))}
                     </Box>
-                  </Container>
-                  
-                )}
-              </CardContent>
-            </Collapse>
-          </Card> 
+                  </Box>
+                  {/* <Box> */}
+                    {/* <Typography variant='h6' sx={{ pb: 0}}>
+                      Add a Let's Geaux users to this party
+                    </Typography> */}
+                    <AddMember
+                      user={user}
+                      partyId={numericPartyId}
+                      partyName={partyName}
+                      getMembers={getUsersForParty}
+                    />
+                  {/* </Box> */}
+                  {/* Email Handling */}
+                  <Button
+                    size='medium'
+                    // color='secondary'
+                    variant='contained'
+                    onClick={openModal}
+                    sx={{ width: 'auto', m: 'auto', p: 'auto' }}
+                  >
+                    Send an E-Vite
+                  </Button>
+                  <Dialog
+                    open={open}
+                    onClose={closeModal}
+                    slotProps={{
+                      paper: {
+                        sx: { border: '2px solid black',
+                          borderRadius: 4,
+                          boxShadow: '4px 4px 0px black',
+                          },
+                      }
+                    }}
+                  >
+                    <Box
+                      component="form"
+                      onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                        e.preventDefault();
+                        if (emails.length > 0) {
+                          setLoading(true);
+                          sendEmail(emails, partyName, userId, partyId)
+                            .finally(() => setLoading(false));
+                        }
+                      }}
+                    >
+                      <Typography variant='subtitle1' sx={{ mt: 2 }}>
+                        Invite your friends to join your travel party
+                      </Typography>
+                      <TextField
+                        id='email'
+                        placeholder='Enter Multiple Emails'
+                        type='text'
+                        fullWidth
+                        value={inputValue}
+                        onChange={event => {
+                          const raw = event.target.value;
+                          setInputValue(raw);
+                          const parsedEmails = raw
+                            .split(',')
+                            .map(email => email.trim())
+                            .filter(email => email.length > 0);
+                          setEmails(parsedEmails);
+                        }}
+                      />
+                      <Button
+                        sx={{ mt: 1 }}
+                        variant='contained'
+                        type='submit'
+                        disabled={emails.length === 0 || loading}
+                      >
+                        {loading ? <CircularProgress size={24} color="inherit" /> : 'Invite'}
+                      </Button>
+                      {inviteSuccess && (
+                        <Typography sx={{ mt: 1, color: 'green' }}>
+                          Invite sent successfully!
+                        </Typography>
+                      )}
+                    </Box>
+                  </Dialog>
+                  {emailLog.length > 0 && (
+                    <Container
+                      sx={{
+                        maxWidth: 500,
+                        border: '4px solid black',
+                        borderRadius: 2,
+                        margin: '0 auto',
+                        p: 2,
+                        boxShadow: '4px 4px 0px black',
+                      }}
+                    >
+                      <Typography variant='h5' gutterBottom>
+                        Sent Invitations
+                      </Typography>
+                      <Box
+                        component='ul'
+                        sx={{ listStyle: 'none', padding: 0, m: 0 }}
+                      >
+                        {emailLog.map((mail, i) => (
+                          <Typography
+                            key={i}
+                            variant='body1'
+                            component='li'
+                            sx={{ mb: 0.5 }}
+                          >
+                            {mail}
+                          </Typography>
+                        ))}
+                      </Box>
+                    </Container>
+                    
+                  )}
+                </CardContent>
+              </Collapse>
+            </Card> 
+          </Box>
           {/* Image Stuff */}
-          <Card
-            sx={{
-              minWidth: 300,
-              maxWidth: 350,
-              flexShrink: 0,
-              p: 2,
-              border: '4px solid black',
-              borderRadius: 4,      
-              backgroundColor: '#C2A4F8',
-              alignSelf: 'flex-start',
-            }}
-          >
-            <CardHeader
-              title="Image"
-              action={
-                <IconButton
-                  onClick={handleImageExpandClick}
-                  aria-expanded={imageExpanded}
-                  aria-label="show more"
-                >
-                  <PiCaretCircleDownBold/>
-                </IconButton>
-              }
-            />
-            <Collapse in={imageExpanded} timeout="auto" unmountOnExit>
-              <ImageUpload userId={user.id} />
-            </Collapse>
-          </Card>
-
+          <Box>
+            <Card
+              sx={{
+                width: isMobile ? 350 :' 512px',
+                flexShrink: 0,
+                p: 2,
+                border: '4px solid black',
+                borderRadius: 4,      
+                backgroundColor: '#C2A4F8',
+                alignSelf: 'flex-start',
+              }}
+            >
+              <CardHeader
+                title="Image"
+                action={
+                  <IconButton
+                    onClick={handleImageExpandClick}
+                    aria-expanded={imageExpanded}
+                    aria-label="show more"
+                  >
+                    <PiCaretCircleDownBold/>
+                  </IconButton>
+                }
+              />
+              <Collapse 
+                in={imageExpanded} 
+                timeout={{
+                  enter: 500,    
+                  exit: 500,     
+                }}
+                easing={{
+                  enter: 'cubic-bezier(0.4, 0, 0.2, 1)',  
+                  exit: 'cubic-bezier(0.4, 0, 0.2, 1)',   
+                }}
+              >
+                <ImageUpload userId={user.id}/>
+              </Collapse>
+            </Card>
+          </Box>
        </Box>
       </Box>
       {/*  Manage Party Model */}
@@ -654,7 +695,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
             e.preventDefault();
             if (emails.length > 0) {
               setLoading(true);
-              sendEmail(emails, partyName, userId, partyId, viewCode)
+              sendEmail(emails, partyName, userId, partyId)
               .finally(() => setLoading(false));
             }
           }}

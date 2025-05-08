@@ -139,7 +139,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     }
   }, [passedName, editingItinerary]);
 
-  
+
 
   //fetch all itineraries
   useEffect(() => {
@@ -191,17 +191,17 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
     setEndDate(end);
 
     // Create a list of Date objects between start and end
-      const range: Date[] = [];
-      let current = begin;
-      while (current.isSameOrBefore(end, 'day')) {
-        range.push(current.toDate()); // convert Dayjs to Date for selectedDates
-        current = current.add(1, 'day');
-      }
-      setSelectedDates(range);
+    const range: Date[] = [];
+    let current = begin;
+    while (current.isSameOrBefore(end, 'day')) {
+      range.push(current.toDate()); // convert Dayjs to Date for selectedDates
+      current = current.add(1, 'day');
+    }
+    setSelectedDates(range);
 
-      setShowCreateForm(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    setShowCreateForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // handle edits to itinerary
   const handleEditSubmit = async () => {
@@ -442,13 +442,13 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
         Itineraries
       </Typography>
       <Box
-        // my={2}
-        // sx={{
-        //   backgroundColor: '#C2A4F8',
-        //   padding: '16px',
-        //   borderRadius: '8px',
-        //   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-        // }}
+      // my={2}
+      // sx={{
+      //   backgroundColor: '#C2A4F8',
+      //   padding: '16px',
+      //   borderRadius: '8px',
+      //   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+      // }}
       >
         {itineraries.map((itinerary, index) => (
           <Card
@@ -466,98 +466,98 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
           >
 
             <CardContent>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant='h3'>{itinerary.name}</Typography>
-              {itinerary.partyName && (
-                <Typography variant='caption'
-                  color='secondary'
-                  sx={{
-                    mt: 1,
-                    display: 'inline-block',
-                     backgroundColor: '#fff085',
-                    color: 'black',
-                    px: 2,
-                    py: 1,
-                    borderRadius: '8px',
-                    // border: '4px solid black',
-                    fontWeight: 700,
-                    fontSize: '0.75rem',
-                    textAlign: 'center',
-                     boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
-                  }}>
-                  Party: {itinerary.partyName}
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant='h3'>{itinerary.name}</Typography>
+                {itinerary.partyName && (
+                  <Typography variant='caption'
+                    color='secondary'
+                    sx={{
+                      mt: 1,
+                      display: 'inline-block',
+                      backgroundColor: '#fff085',
+                      color: 'black',
+                      px: 2,
+                      py: 1,
+                      borderRadius: '8px',
+                      // border: '4px solid black',
+                      fontWeight: 700,
+                      fontSize: '0.75rem',
+                      textAlign: 'center',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                    }}>
+                    Party: {itinerary.partyName}
+                  </Typography>
+                )}
+
+                <Typography variant='body1'>{itinerary.notes}</Typography>
+                <Typography variant='body1'>
+                  Begin:{' '}
+                  {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY h:mm A')}
                 </Typography>
-              )}
+                <Typography variant='body1'>
+                  End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY h:mm A')}
+                </Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 1,
+                    mt: 2
+                  }}
+                >
+                  <Typography
+                    variant='caption'
+                    color='secondary'
+                    sx={{
+                      display: 'inline-block',
+                      backgroundColor: '#fff085',
+                      color: 'black',
+                      px: 2,
+                      py: 1,
+                      borderRadius: '8px',
+                      //border: '4px solid black',
+                      fontWeight: 700,
+                      fontSize: '0.75rem',
+                      textAlign: 'center',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                    }}
+                  >
+                    View Code: {itinerary.viewCode}
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    size="small"
+                    sx={{
+                      display: 'inline-block',
+                      backgroundColor: 'primary.main',
+                      color: 'black',
+                      px: 2,
+                      py: 1,
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      fontSize: '0.75rem',
+                      textAlign: 'center',
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
 
-              <Typography variant='body1'>{itinerary.notes}</Typography>
-              <Typography variant='body1'>
-                Begin:{' '}
-                {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY h:mm A')}
-              </Typography>
-              <Typography variant='body1'>
-                End: {dayjs(itinerary.end).format('dddd, MMMM D, YYYY h:mm A')}
-              </Typography>
-              <Box
-  sx={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center', 
-    gap: 1,
-    mt: 2
-  }}
->
-              <Typography
-                variant='caption'
-                color='secondary'
-                sx={{
-                  display: 'inline-block',
-                  backgroundColor: '#fff085',
-                  color: 'black',
-                  px: 2,
-                  py: 1,
-                  borderRadius: '8px',
-                  //border: '4px solid black',
-                  fontWeight: 700,
-                  fontSize: '0.75rem',
-                  textAlign: 'center',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
-                }}
-              >
-                View Code: {itinerary.viewCode}
-              </Typography>
-              <Button
-                variant="contained"
-                color="secondary"
-                size="small"
-                sx={{
-                  display: 'inline-block',
-                  backgroundColor: 'primary.main',
-                  color: 'black',
-                   px: 2,
-                  py: 1,
-                  borderRadius: '8px',
-                  fontWeight: 700,
-                  fontSize: '0.75rem',
-                  textAlign: 'center',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-
-                }}  
-                onClick={() => {
-                  setSelectedViewCode(itinerary.viewCode);
-                  setSelectedItineraryName(itinerary.name);
-                  setInviteDialogOpen(true);
-                }}
-              >
+                    }}
+                    onClick={() => {
+                      setSelectedViewCode(itinerary.viewCode);
+                      setSelectedItineraryName(itinerary.name);
+                      setInviteDialogOpen(true);
+                    }}
+                  >
 
 
-                Share Itinerary
-              </Button>
-              </Box>
-              {itinerary.message && (
-                <Alert severity='success'>{itinerary.message}</Alert>
-              )}
+                    Share Itinerary
+                  </Button>
                 </Box>
-            </CardContent>  
+                {itinerary.message && (
+                  <Alert severity='success'>{itinerary.message}</Alert>
+                )}
+              </Box>
+            </CardContent>
             <CardActions sx={{ flexDirection: 'column', alignItems: 'flex-start' }}>
               <IconButton
                 onClick={() => handleEditClick(itinerary)}
@@ -584,36 +584,57 @@ const Itinerary: React.FC<ItineraryProps> = ({ user }) => {
               {/* {console.log('routes', routes)}
               {console.log('itinID', itineraryId)}
               {console.log('itin.id', itinerary.id)} */}
-              
-              {/* rendering Routes  */}
-              <Typography variant='h3'> Routes Between Activities:</Typography>
 
-              {routes
-                .filter((route) => route.itineraryId === itinerary.id)
-                .map((route, index) => (
-                  <Card
-                    key={index}
-                    sx={{
-                      position: 'relative',
-                      mb: 2,
-                      backgroundColor: '#C2A4F8',
-                      borderRadius: '24px',
-                      padding: 2,
-                      boxShadow: 'none',
-                      border: '4px solid black',
-                      fontWeight: 700
-                    }}
-                  >
-                    <Box textAlign='center'>
-                      <Typography variant="body1">Origin: {route.origin}</Typography>
-                      <Typography variant="body1">Destination: {route.destination}</Typography>
-                      <Typography variant="body1">Travel Time: {route.travelTime}</Typography>
-                      <Button sx={{ color: 'black' }} onClick={() => deleteRoute(route.id)}>
-                        <PiTrash />
-                      </Button>
-                    </Box>
-                  </Card>
-                ))}
+              {/* rendering Routes  */}
+              <Box width="100%" display="flex" justifyContent="center" mt={4}>
+                <Box textAlign="center">
+                  <Typography variant="h3">
+                    Routes Between Activities:
+                  </Typography>
+                </Box>
+              </Box>
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                width="100%"
+                sx={{ mt: 4 }}
+              >
+                <Box width="100%" maxWidth={400}>
+                  {routes
+                    .filter((route) => route.itineraryId === itinerary.id)
+                    .map((route, index) => (
+                      <Card
+                        key={index}
+                        sx={{
+                          position: 'relative',
+                          mb: 2,
+                          backgroundColor: '#C2A4F8',
+                          borderRadius: '24px',
+                          padding: 2,
+                          boxShadow: 'none',
+                          border: '4px solid black',
+                          fontWeight: 700,
+                        }}
+                      >
+                        <Box textAlign="left">
+                          <Typography variant="body1">Origin: {route.origin}</Typography>
+                          <Typography variant="body1">Destination: {route.destination}</Typography>
+                          <Typography variant="body1">Travel Time: {route.travelTime}</Typography>
+                          <IconButton sx={{
+                            color: 'black',
+                            position: 'absolute',
+                            bottom: 8,
+                            right: 8,
+                          }} onClick={() => deleteRoute(route.id)}>
+                            <PiTrash />
+                          </IconButton>
+                        </Box>
+                      </Card>
+                    ))}
+                </Box>
+              </Box>
 
               {user && (
                 <Activity

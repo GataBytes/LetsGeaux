@@ -16,7 +16,7 @@ const Posts: React.FC<PostProps> = ({user, postSet, getAllPosts}) => {
   const [editablePost, setEditablePost] = useState(null);
 
   return (
-    <Container>
+    <Container sx={{ textAlign: "center" }}>
       <PostForm
       getAllPosts={getAllPosts}
       user={user}

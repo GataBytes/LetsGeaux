@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import dayjs from 'dayjs';
 import {
   Container,
   Typography,
@@ -165,11 +166,13 @@ const deletePost = () => {
 
 return (
   // MAKE SURE THE WRONG PEOPLE DON'T SEE THE EDIT BUTTON!!!
-  <Container>
+  <Container sx={{ justifyContent: "center" }}>
       <Box sx={{
         position: 'relative',
         border: "4px solid black",
         borderRadius: 4,
+        textAlign: "center",
+        justifyContent: "center",
         p: 2,
         mb: "8px",
       }}
@@ -198,7 +201,8 @@ return (
         <Typography variant='h3'>{currentPost.title}</Typography>
       <Typography> {body}</Typography>
       <Typography>By: {postName}</Typography>
-      <Box sx={{ borderRadius: 4 }} display="flex" alignItems="flex-start" gap={1}>
+      <Typography>On {dayjs(currentPost.createdAt).format('MMMM D, YYYY')} at {dayjs(currentPost.createdAt).format('hh:mm a')}</Typography>
+      <Box sx={{ borderRadius: 4, textAlign: 'center', justifyContent: "center" }} display="flex" alignItems="flex-start" gap={1}>
 
       {!hasLiked
        ? (
