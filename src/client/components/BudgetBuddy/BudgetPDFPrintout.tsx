@@ -46,7 +46,7 @@ const BudgetPDFPrintout: React.FC<BudgetPDFPrintoutProps> = ({ itinerary, budget
           padding: 2,
           maxWidth: 600,          // constrain width
           margin: '0 auto',       // center on page
-          backgroundColor: 'white',
+          backgroundColor: '#f9f9f9',
           color: 'black',
           border: '1px solid #ccc'
         }}
@@ -57,12 +57,12 @@ const BudgetPDFPrintout: React.FC<BudgetPDFPrintoutProps> = ({ itinerary, budget
         </Box>
 
         {/* itinerary title (printed at top of PDF) */}
-        <Typography variant="h4" sx={{ mb: 2, textAlign: 'center' }}>
+        <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>
           {itinerary.name}
         </Typography>
 
         {/* budget Breakdown by Category */}
-        <Typography variant="h6" sx={{ mb: 1 }}>
+        <Typography variant="h8" sx={{ mb: 1 }}>
           Budget Breakdown:
         </Typography>
         {budgetBreakdown.map((cat) => (
@@ -76,7 +76,7 @@ const BudgetPDFPrintout: React.FC<BudgetPDFPrintoutProps> = ({ itinerary, budget
 
         {/* current Budget Summary */}
         <Box sx={{ mt: 2 }}>
-          <Typography variant="h6">
+          <Typography variant="h8">
             Current Budget in Total: ${currentBudget.toFixed(2)}
           </Typography>
         </Box>

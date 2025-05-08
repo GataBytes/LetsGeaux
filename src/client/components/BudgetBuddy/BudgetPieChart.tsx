@@ -109,7 +109,7 @@ const BudgetPieChart: React.FC<Props> = ({ selectedItineraryId }) => {
   }
 
   return (
-    <Box sx={{ width: '100%', mt: 4 }}>
+    <Box sx={{ width: '100%', mt: 8 }}>
       <Typography variant="h6" gutterBottom>Budget Distribution</Typography>
 
       {chartData.length === 0 ? (
@@ -124,8 +124,8 @@ const BudgetPieChart: React.FC<Props> = ({ selectedItineraryId }) => {
               connectorLength: 20        //improve label spacing
             })),
           }]}
-          width={400}
-          height={300}
+          width={500}
+          height={400}
           onClick={(e) => {
             if (e?.name) setSelectedCategory(e.name);
           }}
