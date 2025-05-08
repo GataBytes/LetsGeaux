@@ -91,7 +91,7 @@ const BudgetBuddy: React.FC = () => {
           Budget Buddy
         </Typography>
 
-        {/* Itinerary selection */}
+        {/* Itinerary Selection */}
         <Box sx={{ mb: 4 }}>
           <Typography sx={{ mb: 1, fontWeight: 'bold' }}>Select Itinerary</Typography>
           <FormControl fullWidth>
@@ -112,7 +112,7 @@ const BudgetBuddy: React.FC = () => {
           </FormControl>
         </Box>
 
-        {/* Budget Overview Section*/}
+        {/* Budget Overview Section */}
         <Box sx={{ my: 3 }}>
           <Paper
             variant="outlined"
