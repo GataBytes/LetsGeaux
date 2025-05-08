@@ -87,11 +87,11 @@ const BudgetBuddy: React.FC = () => {
           p: isMobile ? 2 : 4,
         }}
       >
-        <Typography variant="h3" gutterBottom align="center">
+        <Typography variant="h6" gutterBottom align="center">
           Budget Buddy
         </Typography>
 
-        {/* Itinerary selection */}
+        {/* Itinerary Selection */}
         <Box sx={{ mb: 4 }}>
           <Typography sx={{ mb: 1, fontWeight: 'bold' }}>Select Itinerary</Typography>
           <FormControl fullWidth>
@@ -112,7 +112,7 @@ const BudgetBuddy: React.FC = () => {
           </FormControl>
         </Box>
 
-        {/* Budget Overview Section*/}
+        {/* Budget Overview Section */}
         <Box sx={{ my: 3 }}>
           <Paper
             variant="outlined"
@@ -150,7 +150,7 @@ const BudgetBuddy: React.FC = () => {
             variant="outlined"
             sx={{
               p: isMobile ? 2 : 4,
-              backgroundColor: '#fff',
+              backgroundColor: '#E0E0E0',
               border: '2px solid black',
               boxShadow: '2px 2px 0px black',
               borderRadius: 2,
@@ -167,7 +167,7 @@ const BudgetBuddy: React.FC = () => {
               variant="outlined"
               sx={{
                 p: isMobile ? 2 : 4,
-                backgroundColor: '#fff',
+                backgroundColor: '#E0E0E0',
                 border: '2px solid black',
                 boxShadow: '2px 2px 0px black',
                 borderRadius: 2,
