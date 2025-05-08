@@ -293,7 +293,6 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
         <Box
           sx={{
             display: 'flex',
-            // flexDirection: 'column',
             gap: 4,
             overflowX: 'auto',
             flexDirection: 'column',
@@ -313,8 +312,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
           <Box>
             <Card
               sx={{
-                minWidth: 300,
-                maxWidth: 350,
+                width: isMobile ? 350 :' 512px',
                 flexShrink: 0,
                 p: 2,
                 border: '4px solid black',
@@ -336,7 +334,17 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                   </IconButton>
                 }
               />
-              <Collapse in={infoExpanded} timeout="auto" unmountOnExit>
+              <Collapse 
+                in={infoExpanded} 
+                timeout={{
+                  enter: 500,    
+                  exit: 500,     
+                }}
+                easing={{
+                  enter: 'cubic-bezier(0.4, 0, 0.2, 1)',  
+                  exit: 'cubic-bezier(0.4, 0, 0.2, 1)',   
+                }}
+              >
                 <CardContent>
                   <Box
                     sx={{
@@ -370,12 +378,17 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                       ))}
                     </Box>
                   </Box>
-                  <AddMember
-                    user={user}
-                    partyId={numericPartyId}
-                    partyName={partyName}
-                    getMembers={getUsersForParty}
-                  />
+                  {/* <Box> */}
+                    {/* <Typography variant='h6' sx={{ pb: 0}}>
+                      Add a Let's Geaux users to this party
+                    </Typography> */}
+                    <AddMember
+                      user={user}
+                      partyId={numericPartyId}
+                      partyName={partyName}
+                      getMembers={getUsersForParty}
+                    />
+                  {/* </Box> */}
                   {/* Email Handling */}
                   <Button
                     size='medium'
@@ -404,7 +417,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                         e.preventDefault();
                         if (emails.length > 0) {
                           setLoading(true);
-                          sendEmail(emails, partyName, userId, partyId, viewCode)
+                          sendEmail(emails, partyName, userId, partyId)
                             .finally(() => setLoading(false));
                         }
                       }}
@@ -483,15 +496,13 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
           <Box>
             <Card
               sx={{
-                minWidth: 300,
-                // maxWidth: 350,
+                width: isMobile ? 350 :' 512px',
                 flexShrink: 0,
                 p: 2,
                 border: '4px solid black',
                 borderRadius: 4,      
                 backgroundColor: '#C2A4F8',
                 alignSelf: 'flex-start',
-                justifyContent: 'center'
               }}
             >
               <CardHeader
@@ -506,8 +517,18 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
                   </IconButton>
                 }
               />
-              <Collapse in={imageExpanded} timeout="auto" unmountOnExit>
-                <ImageUpload userId={user.id} />
+              <Collapse 
+                in={imageExpanded} 
+                timeout={{
+                  enter: 500,    
+                  exit: 500,     
+                }}
+                easing={{
+                  enter: 'cubic-bezier(0.4, 0, 0.2, 1)',  
+                  exit: 'cubic-bezier(0.4, 0, 0.2, 1)',   
+                }}
+              >
+                <ImageUpload userId={user.id}/>
               </Collapse>
             </Card>
           </Box>
@@ -674,7 +695,7 @@ const PartyDashboard: React.FC<PartyDashboardProps> = ({ user }) => {
             e.preventDefault();
             if (emails.length > 0) {
               setLoading(true);
-              sendEmail(emails, partyName, userId, partyId, viewCode)
+              sendEmail(emails, partyName, userId, partyId)
               .finally(() => setLoading(false));
             }
           }}

@@ -4,6 +4,7 @@ import { useSnackbar } from 'notistack';
 import { Button, TextField, Typography, Box, Stack } from '@mui/material';
 import ImageDisplay from './ImageDisplay';
 import { useImageContext } from './ImageContext';
+import { useMedia } from './MediaQueryProvider.tsx';
 interface ImageUploadProps {
   userId: number;
 }
@@ -14,7 +15,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
   const [images, setPictures] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const { setImages } = useImageContext();
-
+  const { isMobile } = useMedia(); 
 
   useEffect(() => {
     getAllImages();
@@ -85,23 +86,45 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
   };
 
   return (
-    <Box sx={{ mx: 'auto', margin: 'auto', py: 4 }}>
-      <Box align="center"
+    // <Box sx={{ mx: 'auto', margin: 'auto', py: 4 }}>
+      <Box
+      sx={{
+        width: '100%',
+        maxWidth: isMobile ? '100%' : '100%',
+        margin: 'auto',
+        py: isMobile? 2 : 4,
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
+      {/* <Box align="center"
         sx={{
           border: '4px solid black',
           borderRadius: 4,
-          padding: 4,
+          padding: 2,
           maxWidth: 400,
           width: '100%',
           textAlign: 'center',
           mx: 'auto',
-
         }}
-      >
+      > */}
+       <Box
+          align="center"
+          sx={{
+            border: isMobile? 'none' : '4px solid black',
+            borderRadius: 4,
+            p: 2,
+            width: '100%',
+            maxWidth: isMobile? '100%' : 400,
+            boxSizing: 'border-box',
+            backgroundColor: '#C2A4F8',
+          }}
+        >
         <Typography
           variant="h3"
           align='center'
-          sx={{ py: 4 }}
+          sx={{ py: 2 }}
+          // sx={{ py: 4 }}
         >
           Upload A Trip Image
         </Typography>
@@ -116,11 +139,18 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ userId }) => {
           </Button>
 
           {url && (
-            <Box sx={{ mt: 2 }}>
+            <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center'  }}>
               <img
                 src={url}
                 alt="Uploaded preview"
-                style={{ width: '200px', marginTop: '10px', borderRadius: '8px' }}
+                style={{
+                  width: '100%',
+                  maxWidth: '260px',
+                  marginTop: '10px',
+                  borderRadius: '8px',
+                  objectFit: 'contain',
+                }}
+                // style={{ width: '200px', marginTop: '10px', borderRadius: '8px' }}
               />
             </Box>
           )}

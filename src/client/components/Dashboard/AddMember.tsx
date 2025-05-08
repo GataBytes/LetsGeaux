@@ -65,7 +65,10 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
   return ( 
     <React.Fragment>
       <Box 
-        sx={{ width: '100%', maxWidth: 300 }}>
+        sx={{ width: '100%', maxWidth: 300, pt: 0 }}>
+        <Typography variant='h6' sx={{ pb: 0, width: '100%'}}>
+          Add a Let's Geaux user to this party
+        </Typography>
         <Autocomplete
           id="user-search"
           freeSolo
@@ -90,7 +93,7 @@ const AddMember: React.FC<AddMemberProps> = ({user, partyId, partyName, getMembe
           renderInput={(params) => 
             <TextField 
               {...params} 
-              placeholder="Add user to your party" 
+              placeholder="Search Users" 
           />}
         />
       </Box>

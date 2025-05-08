@@ -163,7 +163,7 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
         {itinerary ? (
           <Card
             sx={{
-              maxWidth: isMobile ? 300 : 'auto%',
+              width: isMobile ? 350 :' 512px',
               minWidth: 300,
               // maxWidth: 300,
               m: 0,
@@ -189,9 +189,19 @@ const Itinerary: React.FC<ItineraryProps> = ({ user, partyId, partyName }) => {
                 </IconButton>
               }
             />
-            <Collapse in={expanded} timeout='auto' unmountOnExit>
+            <Collapse 
+              in={expanded} 
+              timeout={{
+                enter: 500,    
+                exit: 500,     
+              }}
+              easing={{
+                enter: 'cubic-bezier(0.4, 0, 0.2, 1)',  
+                exit: 'cubic-bezier(0.4, 0, 0.2, 1)',   
+              }}
+            >
               <CardContent sx={{ textAlign: 'center' }}>
-                <Typography variant='h3'>{itinerary.name}</Typography>
+                {/* <Typography variant='h3'>{itinerary.name}</Typography> */}
                 <Typography variant='body1'>{itinerary.notes}</Typography>
                 <Typography variant='body1'>
                   Begin: {dayjs(itinerary.begin).format('dddd, MMMM D, YYYY')}
